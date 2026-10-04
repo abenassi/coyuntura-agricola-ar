@@ -14,7 +14,7 @@ export const MCP_BASE = "https://argentinadata.mymcps.dev";
 export const MCP_ENDPOINT = `${MCP_BASE}/mcp`;
 
 /** Cliente OAuth público de este sitio, registrado con `npm run registrar-cliente`. */
-export const CLIENT_ID = "";
+export const CLIENT_ID = "404368eb-a735-4fb7-82ee-27220f4d9e5a";
 
 /** Nombre del sitio en las métricas del MCP. Sólo se emite desde HOST_PRODUCCION. */
 export const SITIO_ANALYTICS = "coyuntura-agricola";
