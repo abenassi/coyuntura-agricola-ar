@@ -84,7 +84,7 @@
   - `completarLogin(url: URL, redirectUri: string, fetchFn?): Promise<"ok" | "sin_code" | "state_invalido" | "error">`: si hay `code` y `state` coincide, POST a `/token` (form-urlencoded: `grant_type=authorization_code`, `code`, `code_verifier`, `redirect_uri`, `client_id`), guarda `access_token`; siempre borra verifier y state y limpia `code`/`state` de la URL con `history.replaceState`.
   - `token(): string | null`, `cerrarSesion(): void`.
 - [ ] Tests (sessionStorage y history falsos):
-  - Vector del RFC 7636: verifier `dBjftJeZ4CVP-mB92K27uhbUJU1p1r_wW1gFWFOEjXk` da challenge `E9Melhoa2OwvFrEMTJguCHaoeK1t8URWbuxgnZe0hdM`.
+  - Vector del RFC 7636: verifier `dBjftJeZ4CVP-mB92K27uhbUJU1p1r_wW1gFWFOEjXk` da challenge `E9Melhoa2OwvFrEMTJguCHaoeK1t8URWbuGJSstw-cM`.
   - `iniciarLogin` arma la URL con todos los parámetros y guarda verifier/state.
   - `completarLogin` con state distinto devuelve `state_invalido`, no llama a fetch y limpia la URL.
   - Segunda llamada con la misma URL (verifier ya borrado) devuelve `state_invalido`.
