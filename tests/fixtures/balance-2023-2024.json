@@ -1,0 +1,75 @@
+{
+ "campania": "2023/2024",
+ "cultivos": [
+  {
+   "cultivo": "maíz",
+   "sup_sembrada_ha": 11103250,
+   "sup_cosechada_ha": 8736712,
+   "produccion_tn": 57494500,
+   "rendimiento_promedio_kg_ha": 6581,
+   "variacion_produccion_vs_anterior_pct": 38.84
+  },
+  {
+   "cultivo": "soja total",
+   "sup_sembrada_ha": 16564537,
+   "sup_cosechada_ha": 16371093,
+   "produccion_tn": 48213216,
+   "rendimiento_promedio_kg_ha": 2945,
+   "variacion_produccion_vs_anterior_pct": 92.51
+  },
+  {
+   "cultivo": "soja 1ra",
+   "sup_sembrada_ha": 12019579,
+   "sup_cosechada_ha": 11867960,
+   "produccion_tn": 37013939,
+   "rendimiento_promedio_kg_ha": 3119,
+   "variacion_produccion_vs_anterior_pct": 85.3
+  },
+  {
+   "cultivo": "trigo total",
+   "sup_sembrada_ha": 5916678,
+   "sup_cosechada_ha": 5575352,
+   "produccion_tn": 15853154,
+   "rendimiento_promedio_kg_ha": 2843,
+   "variacion_produccion_vs_anterior_pct": 26.26
+  },
+  {
+   "cultivo": "soja 2da",
+   "sup_sembrada_ha": 4544957,
+   "sup_cosechada_ha": 4503132,
+   "produccion_tn": 11199288,
+   "rendimiento_promedio_kg_ha": 2487,
+   "variacion_produccion_vs_anterior_pct": 120.89
+  },
+  {
+   "cultivo": "cebada total",
+   "sup_sembrada_ha": 1484473,
+   "sup_cosechada_ha": 1296636,
+   "produccion_tn": 5097342,
+   "rendimiento_promedio_kg_ha": 3931,
+   "variacion_produccion_vs_anterior_pct": 8.55
+  },
+  {
+   "cultivo": "girasol",
+   "sup_sembrada_ha": 1857963,
+   "sup_cosechada_ha": 1842731,
+   "produccion_tn": 3895161,
+   "rendimiento_promedio_kg_ha": 2114,
+   "variacion_produccion_vs_anterior_pct": -22.39
+  },
+  {
+   "cultivo": "trigo candeal",
+   "sup_sembrada_ha": 121235,
+   "sup_cosechada_ha": 121212,
+   "produccion_tn": 302966,
+   "rendimiento_promedio_kg_ha": 2499,
+   "variacion_produccion_vs_anterior_pct": 32.41
+  }
+ ],
+ "campania_anterior": "2022/2023",
+ "total_cultivos": 28,
+ "advertencia": "Este balance incluye agregados y sus desagregados (soja total / soja 1ra / soja 2da; trigo total / trigo candeal; poroto total / poroto negro / poroto alubia / poroto otros). El agregado 'X total' ya contiene a los desagregados; no los sumes entre sí para evitar doble conteo.",
+ "fuente": "MAGyP — Sistema Integrado de Información Agropecuaria (SIIA)",
+ "fuente_url": "https://datos.magyp.gob.ar/dataset/estimaciones-agricolas",
+ "freshness": "current"
+}
