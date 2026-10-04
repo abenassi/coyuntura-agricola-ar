@@ -26,7 +26,7 @@ export const HOST_PRODUCCION = "agro.mymcps.dev";
 export const REF = "coyuntura-agricola";
 
 /** Página de planes, para cuando el visitante agota su cuota. */
-export const URL_PLANES = `${MCP_BASE}/?ref=${REF}#planes`;
+export const URL_PLANES = `${MCP_BASE}/upgrade?source=${REF}`;
 
 /** Este repo, para el link "cómo está hecho". */
 export const URL_REPO = "https://github.com/abenassi/coyuntura-agricola-ar";
