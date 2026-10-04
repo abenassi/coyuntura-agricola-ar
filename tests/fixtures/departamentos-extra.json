@@ -1,0 +1,20 @@
+{
+  "_nota": "Departamentos con datos de trigo o girasol 2024/2025 que no aparecen en los fixtures de soja ni maíz. Copiados de siia_estimaciones_cultivo (2026-10-04).",
+  "departamentos": [
+    ["Santiago del Estero", "Quebrachos"],
+    ["San Luis", "Libertador General San Martín"],
+    ["Buenos Aires", "General Lavalle"],
+    ["Buenos Aires", "Tordillo"],
+    ["Catamarca", "El Alto"],
+    ["Chaco", "25 de Mayo"],
+    ["Formosa", "Laishí"],
+    ["Formosa", "Patiño"],
+    ["Jujuy", "Palpalá"],
+    ["Salta", "La Viña"],
+    ["Salta", "La Caldera"],
+    ["Tucumán", "Yerba Buena"],
+    ["Tucumán", "Tafí Viejo"],
+    ["Córdoba", "San Javier"],
+    ["Córdoba", "Calamuchita"]
+  ]
+}
