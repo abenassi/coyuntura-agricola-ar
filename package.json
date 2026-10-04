@@ -1,0 +1,35 @@
+{
+  "name": "coyuntura-agricola-ar",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Informe de coyuntura agrícola argentina, en vivo sobre Argentina Data MCP",
+  "license": "MIT",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "verificar": "tsc --noEmit && vitest run && vite build",
+    "registrar-cliente": "tsx scripts/registrar-cliente.ts",
+    "geometria": "tsx scripts/preparar-geometria.ts",
+    "smoke": "playwright test"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.63.0",
+    "@types/leaflet": "^1.9.22",
+    "@types/node": "^26.6.4",
+    "@types/topojson-client": "^3.1.5",
+    "mapshaper": "^0.7.72",
+    "tsx": "^4.23.15",
+    "typescript": "^7.0.2",
+    "vite": "^8.3.2",
+    "vitest": "^5.0.3"
+  },
+  "dependencies": {
+    "chart.js": "^4.5.1",
+    "leaflet": "^1.9.4",
+    "topojson-client": "^3.1.0"
+  }
+}

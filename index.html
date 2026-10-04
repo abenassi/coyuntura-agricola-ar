@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="es-AR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!--
+      Política de contenido estricta: sólo scripts propios y conexiones al MCP.
+      El token del visitante vive en sessionStorage; esta política es lo que impide
+      que un script ajeno lo lea. Si agregás una dependencia, empaquetala con Vite:
+      nada se carga desde un CDN.
+    -->
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; script-src 'self'; connect-src 'self' https://argentinadata.mymcps.dev; img-src 'self' data:; style-src 'self' 'unsafe-inline'"
+    />
+    <meta name="referrer" content="strict-origin-when-cross-origin" />
+    <title>Coyuntura agrícola · soja, maíz, trigo y girasol</title>
+    <meta
+      name="description"
+      content="Producción, superficie y rendimiento de la última campaña contra la anterior, ranking de provincias, evolución y mapa por departamento. Datos del MAGyP en vivo vía Argentina Data MCP."
+    />
+  </head>
+  <body>
+    <main id="app"></main>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
