@@ -44,10 +44,11 @@ function cargarGeometria(): Promise<FeatureDepto[]> {
 export function seccionMapa(q: Consultas, filtros: () => Filtros, cambiar: (p: Partial<Filtros>) => void) {
   return {
     clave: () => `${filtros().cultivo} ${filtros().campania} ${filtros().metricaMapa}`,
-    async cargar(cuerpo: HTMLElement) {
+    async cargar(cuerpo: HTMLElement, vigente: () => boolean) {
       const { cultivo: c, campania, metricaMapa } = filtros();
       if (!campania) return;
       const [est, features] = await Promise.all([q.estimaciones(c, campania), cargarGeometria()]);
+      if (!vigente()) return;
       const indice = indexarGeometria(features);
       const { cruzadas, sinGeometria } = cruzar(est.datos, indice);
 
@@ -92,7 +93,9 @@ export function seccionMapa(q: Consultas, filtros: () => Filtros, cambiar: (p: P
       );
 
       // Leaflet necesita que el contenedor ya esté en el documento para medirlo.
-      requestAnimationFrame(() => dibujar(contenedor, features, cruzadas, cortes, metricaMapa));
+      requestAnimationFrame(() => {
+        if (vigente()) dibujar(contenedor, features, cruzadas, cortes, metricaMapa);
+      });
     },
   };
 }
@@ -147,7 +150,9 @@ function dibujar(
   metrica: MetricaMapa,
 ) {
   mapa?.remove();
-  mapa = L.map(contenedor, { zoomSnap: 0.25, scrollWheelZoom: false, attributionControl: true });
+  // En pantallas táctiles el arrastre con un dedo se lo deja a la página (si no, el mapa atrapa el
+  // scroll); el zoom con dos dedos y los botones siguen andando.
+  mapa = L.map(contenedor, { zoomSnap: 0.25, scrollWheelZoom: false, dragging: !L.Browser.mobile, attributionControl: true });
   mapa.attributionControl.setPrefix(false).addAttribution("Límites: IGN vía Georef · Datos: MAGyP vía Argentina Data MCP");
 
   const porId = new Map(cruzadas.map((c) => [c.feature.properties.id, c.fila]));
@@ -169,10 +174,11 @@ function dibujar(
       onEachFeature: (f, capaDepto) => {
         const fila = porId.get((f as FeatureDepto).properties.id);
         if (!fila) {
-          capaDepto.bindTooltip(`${(f as FeatureDepto).properties.nombre}: sin datos`, { sticky: true });
+          capaDepto.bindTooltip(() => h("span", {}, `${(f as FeatureDepto).properties.nombre}: sin datos`), { sticky: true });
           return;
         }
-        capaDepto.bindTooltip(`${fila.departamento}: ${formatoMetrica(valorDe(fila, metrica), metrica)}`, { sticky: true });
+        // Siempre un nodo y no un string: Leaflet mete los strings con innerHTML, y los nombres vienen de afuera.
+        capaDepto.bindTooltip(() => h("span", {}, `${fila.departamento}: ${formatoMetrica(valorDe(fila, metrica), metrica)}`), { sticky: true });
         capaDepto.bindPopup(() => detalle(fila));
         capaDepto.on("click", () => analytics.mapaDepartamentoClick(fila.provincia, fila.departamento));
       },

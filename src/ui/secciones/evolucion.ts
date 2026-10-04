@@ -22,9 +22,10 @@ let grafico: Chart | null = null;
 export function seccionEvolucion(q: Consultas, filtros: () => Filtros, cambiar: (p: Partial<Filtros>) => void) {
   return {
     clave: () => `${filtros().cultivo} ${filtros().provincia} ${filtros().campania}`,
-    async cargar(cuerpo: HTMLElement) {
+    async cargar(cuerpo: HTMLElement, vigente: () => boolean) {
       const { cultivo: c, provincia, campania } = filtros();
       const ev = await q.evolucion(c, provincia);
+      if (!vigente()) return;
 
       const control = selector(
         "Zona",

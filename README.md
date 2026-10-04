@@ -97,7 +97,10 @@ npm run verificar  # tipos + tests + build
    ```bash
    npm run registrar-cliente -- --redirect https://<tu-usuario>.github.io/coyuntura-agricola-ar/ --redirect http://localhost:5173/
    ```
-3. Borrá `public/CNAME` (o poné tu dominio) y hacé push a `main`: el workflow testea, compila y publica.
+3. Borrá `public/CNAME` y hacé push a `main`: el workflow testea, compila y publica en
+   `https://<tu-usuario>.github.io/coyuntura-agricola-ar/`. Si querés un dominio propio, configuralo en
+   *Settings → Pages → Custom domain* (cuando Pages publica desde Actions, el archivo `CNAME` no alcanza) y
+   registrá esa URL con `registrar-cliente`.
 
 No hay que configurar ningún secret. La pantalla de autorización del MCP va a mostrar una advertencia
 ("No reconocemos ese destino") para tu dominio: es la protección contra phishing para apps que el MCP

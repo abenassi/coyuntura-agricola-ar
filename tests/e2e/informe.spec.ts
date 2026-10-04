@@ -25,6 +25,10 @@ function sse(resultado: unknown) {
 interface Simulacion {
   llamadas: string[];
   agotarEn?: string;
+  /** Milisegundos de demora por consulta, para provocar respuestas fuera de orden. */
+  demora?: (tool: string, args: Record<string, unknown>) => number;
+  /** Reemplaza la respuesta de una tool. */
+  respuesta?: (tool: string, args: Record<string, unknown>) => unknown;
 }
 
 async function simularMcp(page: Page, sim: Simulacion) {
@@ -32,6 +36,8 @@ async function simularMcp(page: Page, sim: Simulacion) {
     const cuerpo = route.request().postDataJSON() as { params: { name: string; arguments: Record<string, unknown> } };
     const tool = cuerpo.params.name;
     sim.llamadas.push(tool);
+    const ms = sim.demora?.(tool, cuerpo.params.arguments) ?? 0;
+    if (ms) await new Promise((listo) => setTimeout(listo, ms));
     const headers = { "access-control-allow-origin": "*", "content-type": "text/event-stream" };
     if (tool === sim.agotarEn) {
       return route.fulfill({
@@ -43,7 +49,7 @@ async function simularMcp(page: Page, sim: Simulacion) {
         }),
       });
     }
-    const dato = RESPUESTAS[tool]?.(cuerpo.params.arguments);
+    const dato = sim.respuesta?.(tool, cuerpo.params.arguments) ?? RESPUESTAS[tool]?.(cuerpo.params.arguments);
     return route.fulfill({ headers, body: sse({ content: [{ type: "text", text: JSON.stringify(dato) }] }) });
   });
   // El buzón de métricas no debería recibir nada desde localhost; si recibe, el test lo ve.
@@ -158,4 +164,79 @@ test("en el celular el informe entra en el ancho de la pantalla", async ({ page 
   const desbordeTabla = await page.locator(".tabla-scroll").evaluate((el) => el.scrollWidth - el.clientWidth);
   expect(desbordeTabla).toBeLessThanOrEqual(0);
   await page.screenshot({ path: "test-results/informe-celular.png", fullPage: true });
+});
+
+test("una respuesta vieja no borra el mapa que ya está a la vista", async ({ page }) => {
+  // Maíz tarda más que trigo: si el visitante toca maíz y enseguida trigo, la respuesta de maíz
+  // llega última y no corresponde dibujarla.
+  const sim: Simulacion = { llamadas: [], demora: (tool, a) => (tool === "siia_estimaciones_cultivo" && a.cultivo === "maíz" ? 1500 : 0) };
+  await simularMcp(page, sim);
+  await conSesion(page);
+  await page.goto("./");
+  await page.getByText("Mapa por departamento").click();
+  await expect(page.locator(".mapa path.leaflet-interactive").first()).toBeVisible();
+  await page.getByRole("button", { name: "Maíz" }).click();
+  await page.getByRole("button", { name: "Trigo" }).click();
+  await page.waitForTimeout(2500);
+  expect(await page.locator("#mapa .mapa path.leaflet-interactive").count()).toBeGreaterThan(500);
+});
+
+test("una respuesta vieja no borra el gráfico de evolución", async ({ page }) => {
+  const sim: Simulacion = { llamadas: [], demora: (tool, a) => (tool === "siia_evolucion_rendimiento" && a.provincia === "Buenos Aires" && a.cultivo === "soja total" ? 1500 : 0) };
+  await simularMcp(page, sim);
+  await conSesion(page);
+  await page.goto("./");
+  await page.getByText("Evolución del rendimiento").click();
+  await expect(page.locator(".grafico canvas")).toBeVisible();
+  await page.getByLabel("Zona").selectOption("Buenos Aires");
+  await page.getByRole("button", { name: "Maíz" }).click();
+  await page.waitForTimeout(2500);
+  const pintado = await page.locator("#evolucion .grafico canvas").evaluate((c: HTMLCanvasElement) => {
+    const datos = c.getContext("2d")!.getImageData(0, 0, c.width, c.height).data;
+    for (let i = 3; i < datos.length; i += 4) if (datos[i]! > 0) return true;
+    return false;
+  });
+  expect(pintado).toBe(true);
+});
+
+test("con la cuota ya agotada al entrar, avisa de la cuota y no muestra un error genérico", async ({ page }) => {
+  const sim: Simulacion = { llamadas: [], agotarEn: "siia_cultivos_disponibles" };
+  await simularMcp(page, sim);
+  await conSesion(page);
+  await page.goto("./");
+  await expect(page.getByText("Llegaste al límite de consultas de tu plan")).toBeVisible();
+  await expect(page.getByRole("link", { name: "Ver planes" })).toBeVisible();
+  await expect(page.getByText("No se pudo consultar el MCP")).toHaveCount(0);
+});
+
+test("los nombres que vienen del MCP se muestran como texto, nunca como HTML", async ({ page }) => {
+  // "Unión<!---->" cruza igual con el polígono de Unión (la normalización descarta la puntuación),
+  // y como HTML sería un comentario invisible: si el tooltip lo muestra literal, entró como texto.
+  const soja = JSON.parse(readFileSync("tests/fixtures/estimaciones-soja-2024-2025.json", "utf8"));
+  const sim: Simulacion = {
+    llamadas: [],
+    respuesta: (tool) =>
+      tool === "siia_estimaciones_cultivo"
+        ? { ...soja, datos: soja.datos.map((f: { provincia: string; departamento: string }) => (f.provincia === "Córdoba" && f.departamento === "Unión" ? { ...f, departamento: "Unión<!---->" } : f)) }
+        : undefined,
+  };
+  await simularMcp(page, sim);
+  await conSesion(page);
+  await page.goto("./");
+  await page.getByText("Mapa por departamento").click();
+  await expect(page.locator(".mapa path.leaflet-interactive").first()).toBeVisible();
+  const visto = await page.evaluate(() => {
+    // Leaflet guarda la capa en cada path; buscamos la de Unión y le abrimos el tooltip.
+    for (const p of document.querySelectorAll<SVGPathElement>(".mapa path.leaflet-interactive")) {
+      const r = p.getBoundingClientRect();
+      const punto = { bubbles: true, clientX: r.x + r.width / 2, clientY: r.y + r.height / 2 };
+      p.dispatchEvent(new MouseEvent("mouseover", punto));
+      p.dispatchEvent(new MouseEvent("mousemove", punto));
+      const union = [...document.querySelectorAll(".leaflet-tooltip")].map((t) => t.textContent ?? "").find((t) => t.startsWith("Unión"));
+      if (union) return union;
+      p.dispatchEvent(new MouseEvent("mouseout", punto));
+    }
+    return null;
+  });
+  expect(visto).toContain("Unión<!---->");
 });

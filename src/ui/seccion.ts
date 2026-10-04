@@ -18,8 +18,11 @@ export interface OpcionesSeccion {
   id: string;
   /** Lo que afecta a esta sección, como texto. Si no cambia, no se recarga. */
   clave: () => string;
-  /** Pide los datos y los dibuja en `cuerpo`. */
-  cargar: (cuerpo: HTMLElement) => Promise<void>;
+  /**
+   * Pide los datos y los dibuja en `cuerpo`. `vigente()` pasa a false si mientras tanto cambiaron
+   * los filtros: una carga vieja no tiene que tocar nada visible (ni destruir un gráfico ni un mapa).
+   */
+  cargar: (cuerpo: HTMLElement, vigente: () => boolean) => Promise<void>;
   /** Se llama cuando el MCP rechaza la sesión. */
   sesionVencida: () => void;
   /** Se llama después de cada carga, para refrescar la cuota. */
@@ -39,7 +42,7 @@ export function montarSeccion(details: HTMLDetailsElement, opciones: OpcionesSec
     cuerpo.replaceChildren(h("p", { class: "cargando", role: "status" }, "Consultando el MCP…"));
     const destino = h("div");
     try {
-      await opciones.cargar(destino);
+      await opciones.cargar(destino, () => turno === enCurso);
       // Si mientras tanto cambiaron los filtros, esta respuesta ya no corresponde.
       if (turno === enCurso) cuerpo.replaceChildren(destino);
     } catch (e: unknown) {
@@ -66,7 +69,8 @@ export function montarSeccion(details: HTMLDetailsElement, opciones: OpcionesSec
   };
 }
 
-function mensajeDeError(e: unknown, seccion: string, reintentar: () => void): HTMLElement {
+/** El aviso que corresponde a un error del MCP: cuota agotada, sesión vencida o falla. */
+export function mensajeDeError(e: unknown, seccion: string, reintentar: () => void): HTMLElement {
   const tool = e instanceof McpError ? (e.tool ?? "?") : "?";
 
   if (e instanceof McpCuotaError) {

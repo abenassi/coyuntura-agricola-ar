@@ -9,7 +9,7 @@
 
 import "./estilos.css";
 import * as analytics from "./analytics";
-import { CLIENT_ID, MCP_BASE, MCP_ENDPOINT, REF } from "./config";
+import { CLIENT_ID, MCP_BASE, MCP_ENDPOINT, REF, URL_REPO } from "./config";
 import { campaniasDisponibles } from "./datos/calculos";
 import { consultas, type Consultas } from "./datos/consultas";
 import { CULTIVOS, type CultivoId } from "./datos/tipos";
@@ -20,7 +20,8 @@ import { h, selector } from "./ui/dom";
 import { campaniaCorta } from "./ui/formato";
 import { escribirFiltros, leerFiltros, type Filtros } from "./ui/filtros";
 import { pantallaIngreso } from "./ui/login";
-import { montarSeccion, type Seccion } from "./ui/seccion";
+import { mensajeDeError, montarSeccion, type Seccion } from "./ui/seccion";
+import { guardarVista, recuperarVista } from "./ui/vista";
 import { seccionBalance } from "./ui/secciones/balance";
 import { seccionEvolucion } from "./ui/secciones/evolucion";
 import { seccionMapa } from "./ui/secciones/mapa";
@@ -36,6 +37,7 @@ function redirectUri(): string {
 async function ingresar() {
   try {
     analytics.loginIniciado();
+    guardarVista(location.search);
     location.assign(await iniciarLogin(redirectUri(), CLIENT_ID));
   } catch (e: unknown) {
     mostrarIngreso(e instanceof Error ? e.message : String(e));
@@ -60,10 +62,7 @@ async function informe(q: Consultas) {
     campanias = campaniasDisponibles(await q.cultivosDisponibles());
   } catch (e: unknown) {
     if (e instanceof McpAuthError) return salir();
-    app.replaceChildren(
-      h("p", { class: "aviso error", role: "alert" }, "No se pudo consultar el MCP. ", e instanceof Error ? e.message : ""),
-      h("button", { type: "button", onclick: () => void informe(q) }, "Reintentar"),
-    );
+    app.replaceChildren(mensajeDeError(e, "inicio", () => void informe(q)));
     return;
   }
 
@@ -163,7 +162,7 @@ async function informe(q: Consultas) {
       ". Cada número de esta página es una consulta en vivo a sus tools ",
       h("code", {}, "siia_*"),
       ". ",
-      h("a", { href: "https://github.com/abenassi/coyuntura-agricola-ar", target: "_blank", rel: "noopener", onclick: () => analytics.clicMcp("repo") }, "Código fuente"),
+      h("a", { href: URL_REPO, target: "_blank", rel: "noopener", onclick: () => analytics.clicMcp("repo") }, "Código fuente"),
       ".",
     ),
   );
@@ -178,7 +177,11 @@ async function informe(q: Consultas) {
 
 async function arrancar() {
   const resultado = await completarLogin(new URL(location.href), redirectUri(), CLIENT_ID);
-  if (resultado === "ok") analytics.loginOk();
+  if (resultado === "ok") {
+    analytics.loginOk();
+    const vista = recuperarVista();
+    if (vista) history.replaceState(null, "", `${location.pathname}${vista}`);
+  }
   if (resultado === "error" || resultado === "state_invalido") analytics.loginError(resultado);
 
   const tok = token();

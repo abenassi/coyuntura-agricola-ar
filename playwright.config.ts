@@ -10,7 +10,9 @@ const sitio = process.env.SITIO;
 
 export default defineConfig({
   testDir: "tests/e2e",
-  timeout: 30_000,
+  timeout: 60_000,
+  // Dibujar 529 polígonos en una máquina lenta (o un runner cargado) puede pasar de los 5 s por defecto.
+  expect: { timeout: 15_000 },
   reporter: "list",
   use: {
     baseURL: sitio ?? "http://localhost:4173/",

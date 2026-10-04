@@ -73,6 +73,20 @@ describe("crearCliente().llamar", () => {
     expect(f).toHaveBeenCalledTimes(1);
   });
 
+  test("un HTTP 429 también es cuota agotada", async () => {
+    const f = vi.fn(async () => new Response("too many", { status: 429 }));
+    await expect(clienteCon(f as unknown as typeof fetch).llamar("x", {})).rejects.toBeInstanceOf(McpCuotaError);
+    expect(f).toHaveBeenCalledTimes(1);
+  });
+
+  test("un timeout no se reintenta: el MCP pudo haber cobrado la consulta", async () => {
+    const f = vi.fn(async () => {
+      throw new DOMException("The operation timed out.", "TimeoutError");
+    });
+    await expect(clienteCon(f as unknown as typeof fetch).llamar("x", {})).rejects.toBeInstanceOf(McpError);
+    expect(f).toHaveBeenCalledTimes(1);
+  });
+
   test("otro error de tool tira McpError con el texto", async () => {
     const f = vi.fn(async () => respuestaMcp("cultivo inválido", { isError: true }));
     const error = await clienteCon(f as unknown as typeof fetch).llamar("x", {}).catch((e: unknown) => e);

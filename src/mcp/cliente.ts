@@ -9,7 +9,7 @@
  * Cada llamada sale con el token del visitante y consume SU cuota. Por eso el cliente:
  * - no repite una consulta que ya hizo en esta visita (memo en memoria, que muere al
  *   recargar: no es un caché de datos, es no cobrarle dos veces lo mismo a la persona);
- * - no reintenta nada que el servidor haya contestado, sólo las fallas de red;
+ * - no reintenta nada que el servidor haya contestado ni un timeout, sólo las fallas de red;
  * - distingue la cuota agotada (que el MCP devuelve como HTTP 200 con `isError`) de un
  *   error de verdad, para que la interfaz pueda decir qué pasó.
  */
@@ -108,6 +108,10 @@ export function crearCliente(opciones: OpcionesCliente): ClienteMcp {
           signal: AbortSignal.timeout(TIMEOUT_MS),
         });
       } catch (e: unknown) {
+        // Un timeout no se reintenta: el pedido pudo haber llegado y el MCP pudo haberlo cobrado.
+        if (e instanceof DOMException && e.name === "TimeoutError") {
+          throw new McpError("El MCP tardó demasiado en responder", tool);
+        }
         ultimaFalla = e instanceof Error ? e.message : String(e);
       }
     }
@@ -128,6 +132,9 @@ export function crearCliente(opciones: OpcionesCliente): ClienteMcp {
 
     if (respuesta.status === 401 || respuesta.status === 403) {
       throw new McpAuthError("El MCP rechazó la sesión", tool);
+    }
+    if (respuesta.status === 429) {
+      throw new McpCuotaError("Demasiadas consultas", tool);
     }
     if (!respuesta.ok) {
       throw new McpError(`El MCP respondió HTTP ${respuesta.status}`, tool);
