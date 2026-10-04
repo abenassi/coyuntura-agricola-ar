@@ -1,0 +1,101 @@
+{
+ "cultivo": "soja total",
+ "campania": "2024/2025",
+ "metrica": "produccion",
+ "ranking": [
+  {
+   "posicion": 1,
+   "provincia": "Buenos Aires",
+   "valor": 15533596,
+   "share_pct": 30.39
+  },
+  {
+   "posicion": 2,
+   "provincia": "Córdoba",
+   "valor": 14628596,
+   "share_pct": 28.62
+  },
+  {
+   "posicion": 3,
+   "provincia": "Santa Fe",
+   "valor": 11463852,
+   "share_pct": 22.43
+  },
+  {
+   "posicion": 4,
+   "provincia": "Entre Ríos",
+   "valor": 3372215,
+   "share_pct": 6.6
+  },
+  {
+   "posicion": 5,
+   "provincia": "Santiago del Estero",
+   "valor": 2895235,
+   "share_pct": 5.66
+  },
+  {
+   "posicion": 6,
+   "provincia": "La Pampa",
+   "valor": 1008942,
+   "share_pct": 1.97
+  },
+  {
+   "posicion": 7,
+   "provincia": "Salta",
+   "valor": 740812,
+   "share_pct": 1.45
+  },
+  {
+   "posicion": 8,
+   "provincia": "Tucumán",
+   "valor": 473056,
+   "share_pct": 0.93
+  },
+  {
+   "posicion": 9,
+   "provincia": "San Luis",
+   "valor": 410091,
+   "share_pct": 0.8
+  },
+  {
+   "posicion": 10,
+   "provincia": "Chaco",
+   "valor": 403337,
+   "share_pct": 0.79
+  },
+  {
+   "posicion": 11,
+   "provincia": "Catamarca",
+   "valor": 101766,
+   "share_pct": 0.2
+  },
+  {
+   "posicion": 12,
+   "provincia": "Formosa",
+   "valor": 38800,
+   "share_pct": 0.08
+  },
+  {
+   "posicion": 13,
+   "provincia": "Misiones",
+   "valor": 15135,
+   "share_pct": 0.03
+  },
+  {
+   "posicion": 14,
+   "provincia": "Jujuy",
+   "valor": 14396,
+   "share_pct": 0.03
+  },
+  {
+   "posicion": 15,
+   "provincia": "Corrientes",
+   "valor": 8010,
+   "share_pct": 0.02
+  }
+ ],
+ "unidad": "toneladas",
+ "fuente": "MAGyP — Sistema Integrado de Información Agropecuaria (SIIA)",
+ "fuente_url": "https://datos.magyp.gob.ar/dataset/estimaciones-agricolas",
+ "freshness": "current"
+}

@@ -1,0 +1,91 @@
+{
+ "cultivo": "soja total",
+ "provincia": "Total país",
+ "campanias_incluidas": 10,
+ "evolucion": [
+  {
+   "campania": "2015/2016",
+   "sup_sembrada_ha": 20562233,
+   "sup_cosechada_ha": 19590871,
+   "produccion_tn": 59095247,
+   "rendimiento_kg_ha": 3016,
+   "variacion_pct": null
+  },
+  {
+   "campania": "2016/2017",
+   "sup_sembrada_ha": 18057162,
+   "sup_cosechada_ha": 17335666,
+   "produccion_tn": 54972546,
+   "rendimiento_kg_ha": 3171,
+   "variacion_pct": 5.14
+  },
+  {
+   "campania": "2017/2018",
+   "sup_sembrada_ha": 17259260,
+   "sup_cosechada_ha": 16318060,
+   "produccion_tn": 37785927,
+   "rendimiento_kg_ha": 2316,
+   "variacion_pct": -26.96
+  },
+  {
+   "campania": "2018/2019",
+   "sup_sembrada_ha": 17010277,
+   "sup_cosechada_ha": 16575887,
+   "produccion_tn": 55263891,
+   "rendimiento_kg_ha": 3334,
+   "variacion_pct": 43.96
+  },
+  {
+   "campania": "2019/2020",
+   "sup_sembrada_ha": 16918869,
+   "sup_cosechada_ha": 16710793,
+   "produccion_tn": 48780412,
+   "rendimiento_kg_ha": 2919,
+   "variacion_pct": -12.45
+  },
+  {
+   "campania": "2020/2021",
+   "sup_sembrada_ha": 16650093,
+   "sup_cosechada_ha": 16466714,
+   "produccion_tn": 46217911,
+   "rendimiento_kg_ha": 2807,
+   "variacion_pct": -3.84
+  },
+  {
+   "campania": "2021/2022",
+   "sup_sembrada_ha": 16094383,
+   "sup_cosechada_ha": 15874266,
+   "produccion_tn": 43861066,
+   "rendimiento_kg_ha": 2763,
+   "variacion_pct": -1.57
+  },
+  {
+   "campania": "2022/2023",
+   "sup_sembrada_ha": 15978775,
+   "sup_cosechada_ha": 14356924,
+   "produccion_tn": 25044982,
+   "rendimiento_kg_ha": 1744,
+   "variacion_pct": -36.88
+  },
+  {
+   "campania": "2023/2024",
+   "sup_sembrada_ha": 16564537,
+   "sup_cosechada_ha": 16371093,
+   "produccion_tn": 48213216,
+   "rendimiento_kg_ha": 2945,
+   "variacion_pct": 68.86
+  },
+  {
+   "campania": "2024/2025",
+   "sup_sembrada_ha": 17994965,
+   "sup_cosechada_ha": 17455116,
+   "produccion_tn": 51107839,
+   "rendimiento_kg_ha": 2928,
+   "variacion_pct": -0.58
+  }
+ ],
+ "promedio_rendimiento_kg_ha": 2794.3,
+ "fuente": "MAGyP — Sistema Integrado de Información Agropecuaria (SIIA)",
+ "fuente_url": "https://datos.magyp.gob.ar/dataset/estimaciones-agricolas",
+ "freshness": "current"
+}

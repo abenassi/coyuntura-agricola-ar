@@ -1,0 +1,50 @@
+{
+ "cultivos": [
+  {
+   "cultivo": "girasol",
+   "campanias": 56,
+   "primera_campania": "1969/1970",
+   "ultima_campania": "2024/2025",
+   "provincias": 16
+  },
+  {
+   "cultivo": "maíz",
+   "campanias": 56,
+   "primera_campania": "1969/1970",
+   "ultima_campania": "2024/2025",
+   "provincias": 21
+  },
+  {
+   "cultivo": "soja 1ra",
+   "campanias": 25,
+   "primera_campania": "2000/2001",
+   "ultima_campania": "2024/2025",
+   "provincias": 15
+  },
+  {
+   "cultivo": "soja total",
+   "campanias": 56,
+   "primera_campania": "1969/1970",
+   "ultima_campania": "2024/2025",
+   "provincias": 16
+  },
+  {
+   "cultivo": "trigo total",
+   "campanias": 56,
+   "primera_campania": "1969/1970",
+   "ultima_campania": "2024/2025",
+   "provincias": 21
+  },
+  {
+   "cultivo": "té",
+   "campanias": 55,
+   "primera_campania": "1969/1970",
+   "ultima_campania": "2023/2024",
+   "provincias": 2
+  }
+ ],
+ "total": 41,
+ "fuente": "MAGyP — Sistema Integrado de Información Agropecuaria (SIIA)",
+ "fuente_url": "https://datos.magyp.gob.ar/dataset/estimaciones-agricolas",
+ "freshness": "current"
+}

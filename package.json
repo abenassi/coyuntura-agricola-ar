@@ -14,7 +14,8 @@
     "verificar": "tsc --noEmit && vitest run && vite build",
     "registrar-cliente": "tsx scripts/registrar-cliente.ts",
     "geometria": "tsx scripts/preparar-geometria.ts",
-    "smoke": "playwright test"
+    "smoke": "playwright test smoke",
+    "e2e": "playwright test informe"
   },
   "devDependencies": {
     "@playwright/test": "^1.63.0",

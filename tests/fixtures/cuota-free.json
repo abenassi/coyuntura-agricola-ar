@@ -1,0 +1,22 @@
+{
+ "plan": "free",
+ "diario": {
+  "usado": 3,
+  "limite": 20,
+  "restante": 17,
+  "reinicio": "2026-10-05T03:00:00.000Z"
+ },
+ "semanal": {
+  "usado": 3,
+  "limite": 100,
+  "restante": 97,
+  "reinicio": "2026-10-05T03:00:00.000Z"
+ },
+ "mensual": {
+  "usado": 3,
+  "limite": 300,
+  "restante": 297,
+  "reinicio": "2026-11-01T03:00:00.000Z"
+ },
+ "mensaje": "(ejemplo armado a mano con la forma real de consultar_cuota)"
+}

@@ -2,6 +2,7 @@ import { describe, expect, test, vi } from "vitest";
 import {
   campaniaAnterior,
   campaniasDisponibles,
+  quantiles,
   compararBalances,
   variacionPct,
 } from "../src/datos/calculos";
@@ -97,5 +98,14 @@ describe("consultas", () => {
       ["siia_evolucion_rendimiento", { cultivo: "trigo total", campanias: 10 }],
       ["siia_estimaciones_cultivo", { cultivo: "girasol", campania: "2024/2025", limit: 500 }],
     ]);
+  });
+});
+
+describe("quantiles", () => {
+  test("parte 10 valores en 5 grupos de 2", () => {
+    expect(quantiles([10, 1, 9, 2, 8, 3, 7, 4, 6, 5], 5)).toEqual([3, 5, 7, 9]);
+  });
+  test("sin valores no hay cortes", () => {
+    expect(quantiles([], 5)).toEqual([]);
   });
 });

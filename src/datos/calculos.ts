@@ -66,3 +66,14 @@ export function campaniasDisponibles(d: CultivosDisponibles): string[] {
   for (let c = ultima; c >= PRIMERA_CAMPANIA; c = campaniaAnterior(c)) lista.push(c);
   return lista;
 }
+
+/**
+ * Cortes para colorear un mapa en `clases` grupos con la misma cantidad de elementos cada uno
+ * (quintiles si son 5). Devuelve `clases - 1` cortes; un valor va a la clase i si es mayor o
+ * igual al corte i-1 y menor al corte i.
+ */
+export function quantiles(valores: number[], clases: number): number[] {
+  const orden = [...valores].sort((a, b) => a - b);
+  if (!orden.length) return [];
+  return Array.from({ length: clases - 1 }, (_, i) => orden[Math.floor(((i + 1) * orden.length) / clases)]!);
+}
