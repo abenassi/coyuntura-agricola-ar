@@ -41,6 +41,15 @@ export class McpCuotaError extends McpError {
   }
 }
 
+/**
+ * La tool contestó con una explicación en vez de datos (por ejemplo, "no hay datos para esa
+ * provincia"). Es una respuesta, no una falla: se muestra tal cual, no se reintenta y, como la
+ * misma consulta va a dar lo mismo, queda memorizada como cualquier respuesta.
+ */
+export class McpToolError extends McpError {
+  override name = "McpToolError";
+}
+
 /** Tools que no consumen cuota y cuyo resultado cambia entre llamadas: no se memorizan. */
 const SIN_MEMO = new Set(["consultar_cuota", "data_health"]);
 
@@ -149,7 +158,7 @@ export function crearCliente(opciones: OpcionesCliente): ClienteMcp {
       throw new McpCuotaError(texto ?? "Cuota agotada", tool, resultado.structuredContent.resets?.daily);
     }
     if (texto === undefined) throw new McpError("La respuesta no trae contenido", tool);
-    if (resultado?.isError) throw new McpError(texto, tool);
+    if (resultado?.isError) throw new McpToolError(texto.replace(/^Error:\s*/, ""), tool);
 
     return JSON.parse(texto) as T;
   }
@@ -164,8 +173,11 @@ export function crearCliente(opciones: OpcionesCliente): ClienteMcp {
 
       const promesa = llamarSinMemo<T>(tool, args);
       memo.set(clave, promesa);
-      // Un error no se memoriza: la próxima vez que la interfaz la pida, se vuelve a intentar.
-      promesa.catch(() => memo.delete(clave));
+      // Una falla no se memoriza: la próxima vez que la interfaz la pida, se vuelve a intentar.
+      // La explicación de una tool (McpToolError) sí: repetirla daría lo mismo y gastaría cuota.
+      promesa.catch((e: unknown) => {
+        if (!(e instanceof McpToolError)) memo.delete(clave);
+      });
       return promesa;
     },
   };

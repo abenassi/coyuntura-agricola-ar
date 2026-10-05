@@ -44,6 +44,23 @@ function cargarGeometria(): Promise<FeatureDepto[]> {
 export function seccionMapa(q: Consultas, filtros: () => Filtros, cambiar: (p: Partial<Filtros>) => void) {
   return {
     clave: () => `${filtros().cultivo} ${filtros().campania} ${filtros().metricaMapa}`,
+    controles: () =>
+      h(
+        "div",
+        { class: "controles-seccion" },
+        selector(
+          "Mostrar",
+          [
+            ["rendimiento", "Rendimiento (kg/ha)"],
+            ["produccion", "Producción (t)"],
+          ],
+          filtros().metricaMapa,
+          (m) => {
+            analytics.metricaElegida("mapa", m);
+            cambiar({ metricaMapa: m as MetricaMapa });
+          },
+        ),
+      ),
     async cargar(cuerpo: HTMLElement, vigente: () => boolean) {
       const { cultivo: c, campania, metricaMapa } = filtros();
       if (!campania) return;
@@ -51,19 +68,6 @@ export function seccionMapa(q: Consultas, filtros: () => Filtros, cambiar: (p: P
       if (!vigente()) return;
       const indice = indexarGeometria(features);
       const { cruzadas, sinGeometria } = cruzar(est.datos, indice);
-
-      const control = selector(
-        "Mostrar",
-        [
-          ["rendimiento", "Rendimiento (kg/ha)"],
-          ["produccion", "Producción (t)"],
-        ],
-        metricaMapa,
-        (m) => {
-          analytics.metricaElegida("mapa", m);
-          cambiar({ metricaMapa: m as MetricaMapa });
-        },
-      );
 
       const avisos: string[] = [];
       if (est.total > est.devueltos) {
@@ -80,7 +84,6 @@ export function seccionMapa(q: Consultas, filtros: () => Filtros, cambiar: (p: P
       const cortes = quantiles(cruzadas.map(({ fila }) => valorDe(fila, metricaMapa)), CLASES);
 
       cuerpo.append(
-        h("div", { class: "controles-seccion" }, control),
         h(
           "p",
           { class: "resumen" },

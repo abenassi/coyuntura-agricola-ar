@@ -170,7 +170,14 @@ async function informe(q: Consultas) {
   definiciones.forEach((d, i) => {
     const s = d.crear();
     secciones.push(
-      montarSeccion(elementos[i]!, { id: d.id, clave: s.clave, cargar: s.cargar, sesionVencida: salir, despuesDeCargar: refrescarCuota }),
+      montarSeccion(elementos[i]!, {
+        id: d.id,
+        clave: s.clave,
+        cargar: s.cargar,
+        controles: "controles" in s ? s.controles : undefined,
+        sesionVencida: salir,
+        despuesDeCargar: refrescarCuota,
+      }),
     );
   });
 }

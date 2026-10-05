@@ -240,3 +240,32 @@ test("los nombres que vienen del MCP se muestran como texto, nunca como HTML", a
   });
   expect(visto).toContain("Unión<!---->");
 });
+
+test("una provincia sin datos avisa, y después se puede elegir otra", async ({ page }) => {
+  const sim: Simulacion = { llamadas: [] };
+  await simularMcp(page, sim);
+  // La tool contesta con isError y una explicación cuando la provincia no tiene datos.
+  await page.route("https://argentinadata.mymcps.dev/mcp", async (route) => {
+    const cuerpo = route.request().postDataJSON() as { params: { name: string; arguments: Record<string, unknown> } };
+    if (cuerpo.params.name === "siia_evolucion_rendimiento" && cuerpo.params.arguments.provincia === "Tierra del Fuego") {
+      return route.fulfill({
+        headers: { "access-control-allow-origin": "*", "content-type": "text/event-stream" },
+        body: sse({ content: [{ type: "text", text: "Error: No hay datos de rendimiento de 'soja total' para la provincia 'Tierra del Fuego'." }], isError: true }),
+      });
+    }
+    return route.fallback();
+  });
+  await conSesion(page);
+  await page.goto("./");
+  await page.getByText("Evolución del rendimiento").click();
+  await expect(page.locator("#evolucion .grafico canvas")).toBeVisible();
+
+  await page.getByLabel("Zona").selectOption("Tierra del Fuego");
+  await expect(page.locator("#evolucion")).toContainText("No hay datos de rendimiento");
+  await expect(page.locator("#evolucion")).not.toContainText("No se pudo cargar");
+  await expect(page.getByLabel("Zona")).toHaveValue("Tierra del Fuego");
+
+  await page.getByLabel("Zona").selectOption("Córdoba");
+  await expect(page.locator("#evolucion .grafico canvas")).toBeVisible();
+  await expect(page).toHaveURL(/provincia=C%C3%B3rdoba/);
+});

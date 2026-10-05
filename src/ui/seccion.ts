@@ -6,7 +6,7 @@
 
 import * as analytics from "../analytics";
 import { URL_PLANES } from "../config";
-import { McpAuthError, McpCuotaError, McpError } from "../mcp/cliente";
+import { McpAuthError, McpCuotaError, McpError, McpToolError } from "../mcp/cliente";
 import { h } from "./dom";
 
 export interface Seccion {
@@ -23,6 +23,11 @@ export interface OpcionesSeccion {
    * los filtros: una carga vieja no tiene que tocar nada visible (ni destruir un gráfico ni un mapa).
    */
   cargar: (cuerpo: HTMLElement, vigente: () => boolean) => Promise<void>;
+  /**
+   * Controles propios de la sección (métrica, zona). Van fuera de lo que se carga: siguen a la
+   * vista mientras carga y si la carga falla, para que siempre se pueda elegir otra opción.
+   */
+  controles?: () => HTMLElement;
   /** Se llama cuando el MCP rechaza la sesión. */
   sesionVencida: () => void;
   /** Se llama después de cada carga, para refrescar la cuota. */
@@ -39,16 +44,19 @@ export function montarSeccion(details: HTMLDetailsElement, opciones: OpcionesSec
     if (clave === cargada) return;
     cargada = clave;
     const turno = ++enCurso;
-    cuerpo.replaceChildren(h("p", { class: "cargando", role: "status" }, "Consultando el MCP…"));
+    const controles = opciones.controles?.() ?? null;
+    const mostrar = (contenido: HTMLElement) => cuerpo.replaceChildren(...(controles ? [controles] : []), contenido);
+    mostrar(h("p", { class: "cargando", role: "status" }, "Consultando el MCP…"));
     const destino = h("div");
     try {
       await opciones.cargar(destino, () => turno === enCurso);
       // Si mientras tanto cambiaron los filtros, esta respuesta ya no corresponde.
-      if (turno === enCurso) cuerpo.replaceChildren(destino);
+      if (turno === enCurso) mostrar(destino);
     } catch (e: unknown) {
       if (turno !== enCurso) return;
-      cargada = null; // que se pueda reintentar
-      cuerpo.replaceChildren(mensajeDeError(e, opciones.id, cargar));
+      // Una explicación de la tool no cambia reintentando; una falla, sí.
+      if (!(e instanceof McpToolError)) cargada = null;
+      mostrar(mensajeDeError(e, opciones.id, cargar));
       if (e instanceof McpAuthError) opciones.sesionVencida();
     } finally {
       if (turno === enCurso) opciones.despuesDeCargar?.();
@@ -86,6 +94,12 @@ export function mensajeDeError(e: unknown, seccion: string, reintentar: () => vo
       "Lo que ya cargaste sigue a la vista. ",
       h("a", { href: URL_PLANES, target: "_blank", rel: "noopener", onclick: () => analytics.clicMcp("planes") }, "Ver planes"),
     );
+  }
+
+  if (e instanceof McpToolError) {
+    // La tool contestó con una explicación (por ejemplo, que no hay datos): se transmite tal cual.
+    analytics.errorMcp(tool, "sin_datos");
+    return h("p", { class: "aviso", role: "status" }, e.message);
   }
 
   if (e instanceof McpAuthError) {

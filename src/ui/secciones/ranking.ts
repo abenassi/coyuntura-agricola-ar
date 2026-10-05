@@ -26,20 +26,19 @@ const NOMBRES: Record<MetricaRanking, string> = {
 export function seccionRanking(q: Consultas, filtros: () => Filtros, cambiar: (p: Partial<Filtros>) => void) {
   return {
     clave: () => `${filtros().cultivo} ${filtros().campania} ${filtros().metricaRanking}`,
+    controles: () =>
+      h(
+        "div",
+        { class: "controles-seccion" },
+        selector("Ordenar por", Object.entries(NOMBRES) as [MetricaRanking, string][], filtros().metricaRanking, (m) => {
+          analytics.metricaElegida("ranking", m);
+          cambiar({ metricaRanking: m as MetricaRanking });
+        }),
+      ),
     async cargar(cuerpo: HTMLElement) {
       const { cultivo: c, campania, metricaRanking } = filtros();
       if (!campania) return;
       const r = await q.ranking(c, campania, metricaRanking);
-
-      const control = selector(
-        "Ordenar por",
-        Object.entries(NOMBRES) as [MetricaRanking, string][],
-        metricaRanking,
-        (m) => {
-          analytics.metricaElegida("ranking", m);
-          cambiar({ metricaRanking: m as MetricaRanking });
-        },
-      );
 
       const titulo = h(
         "p",
@@ -50,7 +49,7 @@ export function seccionRanking(q: Consultas, filtros: () => Filtros, cambiar: (p
           : `participación de cada provincia en el total país.`,
       );
 
-      cuerpo.append(h("div", { class: "controles-seccion" }, control), titulo, barras(r), notaFuente(r));
+      cuerpo.append(titulo, barras(r), notaFuente(r));
     },
   };
 }

@@ -1,6 +1,7 @@
 import { describe, expect, test, vi } from "vitest";
 import {
   crearCliente,
+  McpToolError,
   desenmarcarSse,
   McpAuthError,
   McpCuotaError,
@@ -93,6 +94,15 @@ describe("crearCliente().llamar", () => {
     expect(error).toBeInstanceOf(McpError);
     expect(error).not.toBeInstanceOf(McpCuotaError);
     expect((error as Error).message).toContain("cultivo inválido");
+  });
+
+  test("una respuesta de la tool con isError (por ejemplo, sin datos) es McpToolError y no se vuelve a pedir", async () => {
+    const f = vi.fn(async () => respuestaMcp("No hay datos de rendimiento de 'soja total' para la provincia 'Tierra del Fuego'.", { isError: true }));
+    const c = clienteCon(f as unknown as typeof fetch);
+    const error = await c.llamar("siia_evolucion_rendimiento", { provincia: "Tierra del Fuego" }).catch((e: unknown) => e);
+    expect(error).toBeInstanceOf(McpToolError);
+    await c.llamar("siia_evolucion_rendimiento", { provincia: "Tierra del Fuego" }).catch(() => {});
+    expect(f).toHaveBeenCalledTimes(1);
   });
 
   test("un error JSON-RPC tira McpError", async () => {

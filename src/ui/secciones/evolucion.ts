@@ -22,21 +22,20 @@ let grafico: Chart | null = null;
 export function seccionEvolucion(q: Consultas, filtros: () => Filtros, cambiar: (p: Partial<Filtros>) => void) {
   return {
     clave: () => `${filtros().cultivo} ${filtros().provincia} ${filtros().campania}`,
+    controles: () =>
+      h(
+        "div",
+        { class: "controles-seccion" },
+        selector("Zona", [["", "Total país"], ...PROVINCIAS.map((p) => [p, p] as const)], filtros().provincia ?? "", (p) => {
+          analytics.provinciaElegida(p || null);
+          cambiar({ provincia: p || null });
+        }),
+      ),
     async cargar(cuerpo: HTMLElement, vigente: () => boolean) {
       const { cultivo: c, provincia, campania } = filtros();
       const ev = await q.evolucion(c, provincia);
       if (!vigente()) return;
 
-      const control = selector(
-        "Zona",
-        [["", "Total país"], ...PROVINCIAS.map((p) => [p, p] as const)],
-        provincia ?? "",
-        (p) => {
-          analytics.provinciaElegida(p || null);
-          cambiar({ provincia: p || null });
-        },
-      );
-      cuerpo.append(h("div", { class: "controles-seccion" }, control));
 
       if (!ev.evolucion?.length) {
         cuerpo.append(h("p", { class: "aviso" }, `No hay datos de ${cultivo(c).nombre.toLowerCase()} para ${provincia ?? "el país"}.`), notaFuente(ev));
