@@ -126,7 +126,7 @@ docs/decisiones/         por qué está hecho así
 
 Stack: TypeScript y Vite sin framework, [Chart.js](https://www.chartjs.org/) para la evolución,
 [Leaflet](https://leafletjs.com/) para el mapa. Nada se carga desde un CDN, y la página tiene una
-política de contenido estricta.
+política de contenido estricta: la única excepción es el script de Cloudflare Web Analytics.
 
 ### El mapa por departamento
 
@@ -145,6 +145,10 @@ El sitio cuenta qué secciones se abren, qué cultivos, campañas y filtros se e
 departamentos del mapa se hace clic y cuándo alguien se queda sin consultas. Los eventos van al
 mismo MCP, sin cookies y sin guardar la IP: el visitante se cuenta con un hash que rota cada 30 días.
 Un fork no manda nada: sólo emite desde `agro.mymcps.dev`. Ver [`src/analytics.ts`](src/analytics.ts).
+
+Además, el sitio publicado pasa por el proxy de Cloudflare, que agrega su Web Analytics (visitas,
+páginas, países, rendimiento; sin cookies). Es la única excepción a "sólo scripts propios" en la
+política de contenido. En un fork servido desde GitHub Pages no aparece.
 
 ## Límites del dato
 

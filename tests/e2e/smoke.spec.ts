@@ -11,15 +11,15 @@ import { CLIENT_ID } from "../../src/config";
 
 test("la home carga y el ingreso lleva a la autorización del MCP", async ({ page, baseURL }) => {
   const errores: string[] = [];
-  // El proxy de Cloudflare inyecta su script de Web Analytics en el HTML. La CSP lo bloquea a
-  // propósito (el token del visitante vive en el navegador: nada de scripts de terceros), así que
-  // ese bloqueo es esperado y no cuenta como error.
-  const esperado = (t: string) => t.includes("static.cloudflareinsights.com") && t.includes("Content Security Policy");
-  page.on("console", (m) => m.type() === "error" && !esperado(m.text()) && errores.push(m.text()));
+  page.on("console", (m) => m.type() === "error" && errores.push(m.text()));
   page.on("pageerror", (e) => errores.push(e.message));
 
   await page.goto("./");
   await expect(page.getByRole("button", { name: "Ver el informe completo" }).first()).toBeVisible();
+  // El proxy de Cloudflare inyecta su Web Analytics: la CSP tiene que dejarlo cargar.
+  if (new URL(baseURL!).hostname === "agro.mymcps.dev") {
+    await expect.poll(() => page.evaluate(() => performance.getEntriesByType("resource").some((r) => r.name.includes("static.cloudflareinsights.com")))).toBe(true);
+  }
   expect(errores).toEqual([]);
 
   await page.getByRole("button", { name: "Ver el informe completo" }).first().click();

@@ -42,5 +42,8 @@ muestre al visitante la advertencia antiphishing pensada para apps de terceros.
 - Para ver el informe hay que tener cuenta en Argentina Data: es la fricción que se aceptó a cambio.
 - El token que devuelve el MCP hoy es la API key del usuario: vale un año y sirve para todas las tools.
   Se mitiga guardándolo en `sessionStorage` (muere con la pestaña), con una política de contenido que
-  sólo permite scripts propios y sin ningún `innerHTML` con datos. Queda pendiente en el MCP emitir
+  sólo permite scripts propios y sin ningún `innerHTML` con datos. Única excepción, aceptada por
+  Agustín el 2026-10-05: el script de Cloudflare Web Analytics, que inyecta el proxy de Cloudflare
+  (sin cookies, analytics de tráfico gratis). Cloudflare ya sirve todo el sitio, así que no suma un
+  tercero que no estuviera en el camino. Queda pendiente en el MCP emitir
   tokens de alcance reducido para apps de terceros (sólo lectura, algunas tools, corta duración).

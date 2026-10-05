@@ -4,14 +4,15 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <!--
-      Política de contenido estricta: sólo scripts propios y conexiones al MCP.
+      Política de contenido estricta: scripts propios y conexiones al MCP, más una sola
+      excepción, Cloudflare Web Analytics (su proxy inyecta el script; no usa cookies).
       El token del visitante vive en sessionStorage; esta política es lo que impide
-      que un script ajeno lo lea. Si agregás una dependencia, empaquetala con Vite:
-      nada se carga desde un CDN.
+      que cualquier otro script ajeno lo lea. Si agregás una dependencia, empaquetala con
+      Vite: nada más se carga desde un CDN.
     -->
     <meta
       http-equiv="Content-Security-Policy"
-      content="default-src 'self'; script-src 'self'; connect-src 'self' https://argentinadata.mymcps.dev; img-src 'self' data:; style-src 'self' 'unsafe-inline'"
+      content="default-src 'self'; script-src 'self' https://static.cloudflareinsights.com; connect-src 'self' https://argentinadata.mymcps.dev https://cloudflareinsights.com; img-src 'self' data:; style-src 'self' 'unsafe-inline'"
     />
     <meta name="referrer" content="strict-origin-when-cross-origin" />
     <title>Coyuntura agrícola · soja, maíz, trigo y girasol</title>
