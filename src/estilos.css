@@ -153,16 +153,80 @@ select {
 /* ---------------------------------------------------------------- ingreso */
 
 .ingreso {
-  max-width: 620px;
-  margin: 10vh auto 0;
+  max-width: 900px;
+  margin: 4vh auto 0;
   display: grid;
-  gap: 16px;
+  gap: 20px;
+}
+
+.ingreso-cabecera,
+.ingreso-pie {
+  display: grid;
+  gap: 12px;
   justify-items: start;
 }
 
 .ingreso .bajada {
   font-size: 1.15rem;
   margin: 0;
+}
+
+.ingreso .nota {
+  margin: 0;
+}
+
+.previa {
+  margin: 0;
+}
+
+.previa-boton {
+  display: block;
+  width: 100%;
+  padding: 0;
+  border: 1px solid var(--borde);
+  border-radius: 12px;
+  overflow: hidden;
+  background: var(--superficie);
+  cursor: pointer;
+  transition: box-shadow 0.15s;
+}
+
+.previa-boton:hover,
+.previa-boton:focus-visible {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.18);
+}
+
+.previa img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.previa figcaption {
+  font-size: 0.85rem;
+  color: var(--texto-secundario);
+  margin-top: 6px;
+}
+
+/* Escritorio: el mapa a la izquierda y las otras dos apiladas a la derecha. Celular: una columna. */
+.previas {
+  display: grid;
+  grid-template-columns: 1fr 1.25fr;
+  gap: 16px;
+  align-items: start;
+}
+
+.previa.principal {
+  grid-row: span 2;
+}
+
+@media (max-width: 720px) {
+  .previas {
+    grid-template-columns: 1fr;
+  }
+  .previa.principal {
+    grid-row: auto;
+  }
 }
 
 /* ---------------------------------------------------------------- cabecera */

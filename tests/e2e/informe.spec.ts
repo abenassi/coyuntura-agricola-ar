@@ -5,77 +5,20 @@
  */
 
 import { readFileSync } from "node:fs";
-import { expect, test, type Page, type Route } from "@playwright/test";
-
-const fixture = (nombre: string) => JSON.parse(readFileSync(`tests/fixtures/${nombre}.json`, "utf8"));
-
-const RESPUESTAS: Record<string, (args: Record<string, unknown>) => unknown> = {
-  siia_cultivos_disponibles: () => fixture("cultivos-disponibles"),
-  siia_balance_campania: (a) => fixture(a.campania === "2023/2024" ? "balance-2023-2024" : "balance-2024-2025"),
-  siia_ranking_provincias: () => fixture("ranking-soja-produccion-2024-2025"),
-  siia_evolucion_rendimiento: () => fixture("evolucion-soja-pais"),
-  siia_estimaciones_cultivo: () => fixture("estimaciones-soja-2024-2025"),
-  consultar_cuota: () => fixture("cuota-free"),
-};
-
-function sse(resultado: unknown) {
-  return `event: message\ndata: ${JSON.stringify({ jsonrpc: "2.0", id: 1, result: resultado })}\n\n`;
-}
-
-interface Simulacion {
-  llamadas: string[];
-  agotarEn?: string;
-  /** Milisegundos de demora por consulta, para provocar respuestas fuera de orden. */
-  demora?: (tool: string, args: Record<string, unknown>) => number;
-  /** Reemplaza la respuesta de una tool. */
-  respuesta?: (tool: string, args: Record<string, unknown>) => unknown;
-}
-
-async function simularMcp(page: Page, sim: Simulacion) {
-  await page.route("https://argentinadata.mymcps.dev/mcp", async (route: Route) => {
-    const cuerpo = route.request().postDataJSON() as { params: { name: string; arguments: Record<string, unknown> } };
-    const tool = cuerpo.params.name;
-    sim.llamadas.push(tool);
-    const ms = sim.demora?.(tool, cuerpo.params.arguments) ?? 0;
-    if (ms) await new Promise((listo) => setTimeout(listo, ms));
-    const headers = { "access-control-allow-origin": "*", "content-type": "text/event-stream" };
-    if (tool === sim.agotarEn) {
-      return route.fulfill({
-        headers,
-        body: sse({
-          content: [{ type: "text", text: "⚠️ Cuota excedida" }],
-          structuredContent: { error: "quota_exceeded", resets: { daily: "2026-10-05T03:00:00.000Z" } },
-          isError: true,
-        }),
-      });
-    }
-    const dato = sim.respuesta?.(tool, cuerpo.params.arguments) ?? RESPUESTAS[tool]?.(cuerpo.params.arguments);
-    return route.fulfill({ headers, body: sse({ content: [{ type: "text", text: JSON.stringify(dato) }] }) });
-  });
-  // El buzón de métricas no debería recibir nada desde localhost; si recibe, el test lo ve.
-  await page.route("https://argentinadata.mymcps.dev/api/eventos", (r) => {
-    sim.llamadas.push("api/eventos");
-    return r.fulfill({ status: 204 });
-  });
-}
-
-async function conSesion(page: Page) {
-  await page.addInitScript(() => sessionStorage.setItem("oauth-token", "adm_de_prueba"));
-}
-
-function erroresDeConsola(page: Page): string[] {
-  const errores: string[] = [];
-  page.on("console", (m) => m.type() === "error" && errores.push(m.text()));
-  page.on("pageerror", (e) => errores.push(e.message));
-  return errores;
-}
+import { expect, test } from "@playwright/test";
+import { conSesion, erroresDeConsola, simularMcp, sse, type Simulacion } from "./mcp-simulado";
 
 test("sin sesión muestra la pantalla de ingreso y no consulta el MCP", async ({ page }) => {
   const sim: Simulacion = { llamadas: [] };
   await simularMcp(page, sim);
   const errores = erroresDeConsola(page);
   await page.goto("./");
-  await expect(page.getByRole("button", { name: "Ingresar con Argentina Data" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Ver el informe completo" }).first()).toBeVisible();
+  // Las vistas previas cargan (si faltara un archivo, la imagen queda en 0 px de ancho natural).
+  for (const img of await page.locator(".previa img").all()) {
+    await img.scrollIntoViewIfNeeded();
+    await expect.poll(() => img.evaluate((i: HTMLImageElement) => i.naturalWidth)).toBeGreaterThan(0);
+  }
   expect(sim.llamadas).toEqual([]);
   expect(errores).toEqual([]);
 });

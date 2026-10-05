@@ -15,10 +15,10 @@ test("la home carga y el ingreso lleva a la autorización del MCP", async ({ pag
   page.on("pageerror", (e) => errores.push(e.message));
 
   await page.goto("./");
-  await expect(page.getByRole("button", { name: "Ingresar con Argentina Data" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Ver el informe completo" }).first()).toBeVisible();
   expect(errores).toEqual([]);
 
-  await page.getByRole("button", { name: "Ingresar con Argentina Data" }).click();
+  await page.getByRole("button", { name: "Ver el informe completo" }).first().click();
   await page.waitForURL(/argentinadata\.mymcps\.dev\/authorize/);
   const url = new URL(page.url());
   expect(url.searchParams.get("client_id")).toBe(CLIENT_ID);

@@ -15,7 +15,8 @@
     "registrar-cliente": "tsx scripts/registrar-cliente.ts",
     "geometria": "tsx scripts/preparar-geometria.ts",
     "smoke": "playwright test smoke",
-    "e2e": "playwright test informe"
+    "e2e": "playwright test informe",
+    "previas": "PREVIAS=1 playwright test previas"
   },
   "devDependencies": {
     "@playwright/test": "^1.63.0",

@@ -58,7 +58,7 @@ Un sitio estático no puede guardar un secreto. Una key metida en el JavaScript 
 con F12, y una restringida por dominio se usa igual desde `curl` falsificando el `Origin`. Un proxy
 la esconde, pero queda como una URL pública que cualquiera puede usar para gastar la cuota del dueño.
 
-Por eso **se autentica el visitante, no el sitio**. El botón "Ingresar con Argentina Data" usa OAuth
+Por eso **se autentica el visitante, no el sitio**. El botón "Ver el informe completo" usa OAuth
 2.1 con PKCE, el flujo pensado para apps que corren en el navegador sin backend:
 
 1. El sitio genera un secreto de un solo uso (`code_verifier`) y manda al visitante a la página de
