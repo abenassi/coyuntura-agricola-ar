@@ -45,7 +45,7 @@ test("con sesión: balance al abrir, el resto recién cuando se abre cada secci�
   await expect(page.locator(".grafico canvas")).toBeVisible();
 
   await page.getByText("Mapa por departamento").click();
-  await expect(page.locator(".mapa path.leaflet-interactive").first()).toBeVisible();
+  await expect.poll(() => page.locator(".mapa path.leaflet-interactive").count()).toBeGreaterThan(500);
   expect(await page.locator(".mapa path.leaflet-interactive").count()).toBeGreaterThan(500);
   await expect(page.locator("#mapa .aviso")).toHaveCount(0); // todos los departamentos cruzaron
 
@@ -100,7 +100,7 @@ test("en el celular el informe entra en el ancho de la pantalla", async ({ page 
   await expect(page.locator("table.balance")).toBeVisible();
   await page.getByText("Provincias líderes").click();
   await page.getByText("Mapa por departamento").click();
-  await expect(page.locator(".mapa path.leaflet-interactive").first()).toBeVisible();
+  await expect.poll(() => page.locator(".mapa path.leaflet-interactive").count()).toBeGreaterThan(500);
   const desborde = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
   expect(desborde).toBeLessThanOrEqual(0);
   // La tabla del balance tampoco puede necesitar scroll: la columna de variación es la que importa.
@@ -117,7 +117,7 @@ test("una respuesta vieja no borra el mapa que ya está a la vista", async ({ pa
   await conSesion(page);
   await page.goto("./");
   await page.getByText("Mapa por departamento").click();
-  await expect(page.locator(".mapa path.leaflet-interactive").first()).toBeVisible();
+  await expect.poll(() => page.locator(".mapa path.leaflet-interactive").count()).toBeGreaterThan(500);
   await page.getByRole("button", { name: "Maíz" }).click();
   await page.getByRole("button", { name: "Trigo" }).click();
   await page.waitForTimeout(2500);
@@ -167,7 +167,7 @@ test("los nombres que vienen del MCP se muestran como texto, nunca como HTML", a
   await conSesion(page);
   await page.goto("./");
   await page.getByText("Mapa por departamento").click();
-  await expect(page.locator(".mapa path.leaflet-interactive").first()).toBeVisible();
+  await expect.poll(() => page.locator(".mapa path.leaflet-interactive").count()).toBeGreaterThan(500);
   const visto = await page.evaluate(() => {
     // Leaflet guarda la capa en cada path; buscamos la de Unión y le abrimos el tooltip.
     for (const p of document.querySelectorAll<SVGPathElement>(".mapa path.leaflet-interactive")) {

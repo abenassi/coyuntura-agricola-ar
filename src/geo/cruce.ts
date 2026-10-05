@@ -1,5 +1,5 @@
 /**
- * Cruce entre los departamentos del SIIA y los polígonos del IGN.
+ * Cruce entre los departamentos del SIIA y los polígonos oficiales del INDEC.
  *
  * El SIIA identifica cada departamento sólo por provincia y nombre, sin código INDEC. El cruce
  * normaliza los dos nombres (minúsculas, sin tildes ni puntuación) y siempre incluye la

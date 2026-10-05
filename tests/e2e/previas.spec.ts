@@ -44,7 +44,7 @@ test("vistas previas de la pantalla de ingreso", async ({ page }) => {
   await page.goto("./");
 
   await page.getByText("Mapa por departamento").click();
-  await expect(page.locator(".mapa path.leaflet-interactive").first()).toBeVisible();
+  await expect.poll(() => page.locator(".mapa path.leaflet-interactive").count()).toBeGreaterThan(500);
   await page.waitForTimeout(800);
   // Sin los botones de zoom ni la atribución: es una imagen, no un mapa.
   await page.addStyleTag({ content: ".leaflet-control-container{display:none}" });

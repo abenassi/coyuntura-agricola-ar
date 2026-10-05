@@ -1,9 +1,11 @@
 /**
  * Arma `public/geo/departamentos.topo.json`, los polígonos de los departamentos del mapa.
  *
- * Fuente: Servicio de Normalización de Datos Geográficos de Argentina (Georef), con
- * geometrías del Instituto Geográfico Nacional (IGN), publicadas por datos.gob.ar:
- * https://infra.datos.gob.ar/georef/departamentos.geojson
+ * Fuente: límites de departamentos del Marco Geoestadístico Nacional del INDEC
+ * (https://geonode.indec.gob.ar/layers/geonode_data:geonode:departamentos). Es la capa oficial con
+ * topología perfecta: los 529 departamentos encajan sin huecos ni superposiciones, así que la
+ * simplificación respeta los bordes compartidos y el mapa no muestra grietas entre vecinos. La
+ * misma capa está en la tabla `departamentos` de Argentina Data (ver docs/decisiones/0003).
  *
  * Se corre a mano, una vez, y el resultado se commitea: los límites de los departamentos no
  * cambian de un día para el otro. No es un caché de los datos del informe (esos se piden en
@@ -18,32 +20,35 @@
 import { writeFile } from "node:fs/promises";
 import mapshaper from "mapshaper";
 
-const FUENTE = "https://infra.datos.gob.ar/georef/departamentos.geojson";
+const FUENTE =
+  "https://geonode.indec.gob.ar/geoserver/geonode/wfs?service=WFS&version=2.0.0&request=GetFeature" +
+  "&typeNames=geonode:departamentos&outputFormat=application/json&srsName=EPSG:4326";
 const DESTINO = "public/geo/departamentos.topo.json";
 
-interface FeatureGeoref {
+interface FeatureIndec {
   type: "Feature";
   geometry: unknown;
-  properties: { id: string; nombre: string; provincia: { nombre: string } };
+  /** cde: código INDEC de 5 dígitos; nam: nombre; jur: provincia. */
+  properties: { cde: string; nam: string; jur: string };
 }
 
-const respuesta = await fetch(FUENTE, { signal: AbortSignal.timeout(120_000) });
-if (!respuesta.ok) throw new Error(`Georef respondió HTTP ${respuesta.status}`);
-const original = (await respuesta.json()) as { features: FeatureGeoref[] };
+const respuesta = await fetch(FUENTE, { signal: AbortSignal.timeout(600_000) });
+if (!respuesta.ok) throw new Error(`El INDEC respondió HTTP ${respuesta.status}`);
+const original = (await respuesta.json()) as { features: FeatureIndec[] };
 
 const liviano = {
   type: "FeatureCollection",
   features: original.features.map((f) => ({
     type: "Feature",
     geometry: f.geometry,
-    properties: { id: f.properties.id, nombre: f.properties.nombre, provincia: f.properties.provincia.nombre },
+    properties: { id: f.properties.cde, nombre: f.properties.nam, provincia: f.properties.jur },
   })),
 };
 
-// 10% de los vértices alcanza para un mapa del país entero; keep-shapes evita que desaparezcan
+// 3% de los vértices alcanza para un mapa del país entero; keep-shapes evita que desaparezcan
 // los departamentos chicos (los del conurbano, por ejemplo).
 const salida = await mapshaper.applyCommands(
-  "-i entrada.json -rename-layers departamentos -simplify 10% keep-shapes -o salida.json format=topojson quantization=100000",
+  "-i entrada.json -rename-layers departamentos -simplify 3% keep-shapes -o salida.json format=topojson quantization=100000",
   { "entrada.json": JSON.stringify(liviano) },
 );
 

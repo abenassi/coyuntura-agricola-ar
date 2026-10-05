@@ -2,7 +2,7 @@
  * Mapa por departamento del cultivo elegido: rendimiento o producción.
  *
  * Una consulta a `siia_estimaciones_cultivo` por cultivo y campaña (todo el país de una vez).
- * Los datos del SIIA no traen geometría: se cruzan por nombre con los polígonos del IGN que
+ * Los datos del SIIA no traen geometría: se cruzan por nombre con los polígonos del INDEC que
  * están en `public/geo/` (ver src/geo/cruce.ts). El mapa no usa capa base (no hay pedidos a
  * servidores de tiles de terceros): sólo los departamentos sobre el fondo.
  */
@@ -156,7 +156,7 @@ function dibujar(
   // En pantallas táctiles el arrastre con un dedo se lo deja a la página (si no, el mapa atrapa el
   // scroll); el zoom con dos dedos y los botones siguen andando.
   mapa = L.map(contenedor, { zoomSnap: 0.25, scrollWheelZoom: false, dragging: !L.Browser.mobile, attributionControl: true });
-  mapa.attributionControl.setPrefix(false).addAttribution("Límites: IGN vía Georef · Datos: MAGyP vía Argentina Data MCP");
+  mapa.attributionControl.setPrefix(false).addAttribution("Límites: INDEC · Datos: MAGyP vía Argentina Data MCP");
 
   const porId = new Map(cruzadas.map((c) => [c.feature.properties.id, c.fila]));
   const borde = getComputedStyle(document.documentElement).getPropertyValue("--superficie").trim();

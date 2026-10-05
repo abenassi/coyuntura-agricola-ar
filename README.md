@@ -115,10 +115,10 @@ src/
   mcp/oauth.ts           ingreso del visitante con OAuth 2.1 + PKCE
   datos/consultas.ts     una función por tool del MCP
   datos/calculos.ts      variaciones, campañas, cortes del mapa (funciones puras)
-  geo/cruce.ts           cruce de los departamentos del SIIA con los polígonos del IGN
+  geo/cruce.ts           cruce de los departamentos del SIIA con los polígonos del INDEC
   ui/secciones/          balance, ranking, evolución y mapa; cada una carga cuando se abre
   analytics.ts           métricas de uso
-public/geo/              polígonos de departamentos (IGN vía Georef), simplificados
+public/geo/              polígonos de departamentos (INDEC), simplificados
 scripts/                 registrar el cliente OAuth, preparar la geometría
 tests/                   unitarios, fixtures con respuestas reales del MCP y e2e con Playwright
 docs/decisiones/         por qué está hecho así
@@ -131,12 +131,13 @@ política de contenido estricta.
 ### El mapa por departamento
 
 El SIIA trae los datos por departamento pero sin geometría ni código INDEC: sólo provincia y nombre.
-Los polígonos son los del Instituto Geográfico Nacional, publicados por
-[Georef](https://datosgobar.github.io/georef-ar-api/), simplificados con `npm run geometria`
-y guardados en `public/geo/` (son 228 KB). El cruce es por provincia y nombre normalizados, con una
-lista de alias para los dos nombres que difieren (por ejemplo, "Villa Constitución" del SIIA es
-"Constitución" para el IGN). Un test exige que todos los departamentos con datos de la última campaña
-encuentren su polígono. Ver [docs/decisiones/0003](docs/decisiones/0003-geometria-de-departamentos.md).
+Los polígonos son los límites oficiales del Marco Geoestadístico Nacional del INDEC
+([capa de departamentos](https://geonode.indec.gob.ar/layers/geonode_data:geonode:departamentos)),
+que encajan sin huecos ni superposiciones. `npm run geometria` los baja, los simplifica respetando
+los bordes compartidos y los guarda en `public/geo/` (371 KB). El cruce es por provincia y nombre
+normalizados, y un test exige que todos los departamentos con datos de la última campaña encuentren
+su polígono. La misma capa, a resolución completa, está en la tabla `departamentos` de Argentina Data.
+Ver [docs/decisiones/0003](docs/decisiones/0003-geometria-de-departamentos.md).
 
 ## Qué mide
 
@@ -154,4 +155,4 @@ revisarse.
 ## Licencia
 
 MIT. Los datos son del Ministerio de Agricultura, Ganadería y Pesca de la Nación, y los límites
-geográficos del IGN.
+departamentales del INDEC.
