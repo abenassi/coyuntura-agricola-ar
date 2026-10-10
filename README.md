@@ -2,7 +2,8 @@
 
 Informe de la campaña agrícola argentina para soja, maíz, trigo y girasol: producción, superficie y
 rendimiento contra la campaña anterior, provincias líderes, evolución del rendimiento en los últimos
-diez años y un mapa por departamento.
+diez años, un mapa por departamento y la historia de cualquier departamento desde 1969, comparable
+con otro departamento y con su provincia.
 
 **En vivo: [agro.mymcps.dev](https://agro.mymcps.dev)**
 
@@ -22,8 +23,8 @@ Los datos son las [estimaciones agrícolas del MAGyP](https://datos.magyp.gob.ar
 | `siia_cultivos_disponibles` | Qué campañas hay, para el selector | 1 por visita |
 | `siia_balance_campania` | Balance nacional de la campaña elegida y de la de comparación | 2 |
 | `siia_ranking_provincias` | Provincias por producción, superficie o rendimiento, con su participación | 1 por cultivo y métrica |
-| `siia_evolucion_rendimiento` | Rendimiento de las últimas 10 campañas, país o provincia | 1 por cultivo y zona |
-| `siia_estimaciones_cultivo` | Todos los departamentos de una campaña, para el mapa | 1 por cultivo y campaña |
+| `siia_evolucion_rendimiento` | Rendimiento de las últimas 10 campañas, país o provincia; y 30 campañas de la provincia como referencia en "Tu departamento" | 1 por cultivo y zona |
+| `siia_estimaciones_cultivo` | Todos los departamentos de una campaña, para el mapa; y toda la historia de un departamento, en "Tu departamento" | 1 por cultivo y campaña, o por cultivo y departamento |
 | `consultar_cuota` | Cuántas consultas le quedan al visitante (no consume cuota) | — |
 
 Todas se llaman igual: un `POST` JSON-RPC al endpoint del MCP con el token del visitante.
@@ -51,6 +52,21 @@ La respuesta llega como un evento SSE, y el dato está en `result.content[0].tex
 El cliente completo, con reintentos y manejo de errores, está en [`src/mcp/cliente.ts`](src/mcp/cliente.ts).
 Las cinco llamadas, con sus argumentos, están en [`src/datos/consultas.ts`](src/datos/consultas.ts):
 si querés armar otra cosa con el MCP, empezá por ahí.
+
+### Tu departamento
+
+Pensada para quien sigue un campo en un departamento: se elige con un buscador predictivo (o desde
+el mapa, con "Ver su evolución") y muestra su historia para el cultivo elegido en rinde, producción
+o superficie, en las últimas 10 o 20 campañas o desde 1969. Se puede comparar con otro departamento,
+y para el rinde suma la línea de la provincia. Una consulta trae toda la historia de un departamento:
+cambiar de período no consulta nada, y cambiar de variable tampoco, salvo la primera vez que se pasa
+al rinde (que suma la consulta de la provincia). El link guarda el departamento
+(`?depto=82042&vs_depto=82014`, con códigos INDEC), así que se puede volver directo.
+
+El filtro por departamento de `siia_estimaciones_cultivo` es una búsqueda parcial que distingue
+tildes: el sitio le pide cada departamento con el nombre exacto del SIIA
+([`src/geo/nombres-siia.json`](src/geo/nombres-siia.json) tiene los cuatro que difieren del INDEC)
+y se queda sólo con las filas de ese nombre.
 
 ## Por qué no hace falta ninguna API key
 

@@ -14,6 +14,7 @@
   --grilla: #e1e0d9;
   --borde: rgba(11, 11, 11, 0.1);
   --serie-1: #2a78d6;
+  --serie-2: #eb6834;
   --enlace: #1c5cab;
   --sin-dato: #f0efec;
   --aviso-fondo: #fdf3e1;
@@ -37,6 +38,7 @@
     --grilla: #2c2c2a;
     --borde: rgba(255, 255, 255, 0.1);
     --serie-1: #3987e5;
+    --serie-2: #d95926;
     --enlace: #86b6ef;
     --sin-dato: #383835;
     --aviso-fondo: #33270d;
@@ -489,4 +491,96 @@ table.balance th[scope="row"] {
 .unidad-rinde {
   font-weight: normal;
   color: var(--texto-tenue);
+}
+
+/* Tu departamento */
+.controles-depto {
+  align-items: start;
+}
+
+.buscador {
+  display: grid;
+  gap: 2px;
+  min-width: min(100%, 300px);
+  flex: 1 1 260px;
+}
+
+.buscador-campo {
+  position: relative;
+  display: flex;
+}
+
+.buscador-campo input {
+  flex: 1;
+  font: inherit;
+  color: inherit;
+  background: var(--superficie);
+  border: 1px solid var(--borde);
+  border-radius: 8px;
+  padding: 8px 10px;
+  min-width: 0;
+}
+
+.buscador-campo .quitar {
+  margin-left: 4px;
+  padding: 4px 10px;
+  font-size: 1.1rem;
+  line-height: 1;
+}
+
+.sugerencias {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  margin: 4px 0 0;
+  padding: 4px 0;
+  list-style: none;
+  background: var(--superficie);
+  border: 1px solid var(--borde);
+  border-radius: 8px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.18);
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.sugerencias li {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 8px 12px;
+  cursor: pointer;
+}
+
+.sugerencias li[aria-selected="true"] {
+  background: var(--sin-dato);
+}
+
+.sugerencia-provincia {
+  color: var(--texto-secundario);
+  font-size: 0.85rem;
+}
+
+.rangos {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+  align-self: end;
+}
+
+.rangos button[aria-pressed="true"] {
+  background: var(--serie-1);
+  border-color: var(--serie-1);
+  color: #fff;
+  font-weight: 600;
+}
+
+.grafico-depto {
+  height: 340px;
+}
+
+.popup .analizar {
+  margin-top: 6px;
+  font-size: 0.85rem;
 }

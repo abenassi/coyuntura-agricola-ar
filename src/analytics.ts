@@ -92,6 +92,9 @@ export const metricaElegida = (seccion: string, metrica: string) => evento("metr
 export const provinciaElegida = (provincia: string | null) => evento("provincia_elegida", { provincia: provincia ?? "pais" });
 export const mapaDepartamentoClick = (provincia: string, departamento: string) =>
   evento("mapa_departamento_click", { provincia, departamento });
+export const departamentoElegido = (origen: "buscador" | "mapa", codigo: string) =>
+  evento("departamento_elegido", { origen, codigo });
+export const departamentoComparado = (codigo: string) => evento("departamento_comparado", { codigo });
 export const cuotaAgotada = (seccion: string) => evento("cuota_agotada", { seccion });
 export const errorMcp = (tool: string, tipo: string) => evento("error_mcp", { tool, tipo });
 export const clicMcp = (destino: string) => evento("clic_mcp", { destino });
@@ -109,6 +112,8 @@ export const EVENTOS = [
   "metrica_elegida",
   "provincia_elegida",
   "mapa_departamento_click",
+  "departamento_elegido",
+  "departamento_comparado",
   "cuota_agotada",
   "error_mcp",
   "clic_mcp",

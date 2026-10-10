@@ -23,6 +23,7 @@ import { pantallaIngreso } from "./ui/login";
 import { mensajeDeError, montarSeccion, type Seccion } from "./ui/seccion";
 import { guardarVista, recuperarVista } from "./ui/vista";
 import { seccionBalance } from "./ui/secciones/balance";
+import { seccionDepartamento } from "./ui/secciones/departamento";
 import { seccionEvolucion } from "./ui/secciones/evolucion";
 import { seccionMapa } from "./ui/secciones/mapa";
 import { seccionRanking } from "./ui/secciones/ranking";
@@ -143,8 +144,20 @@ async function informe(q: Consultas) {
     { id: "balance", titulo: "Balance de la campaña", abierta: true, crear: () => seccionBalance(q, () => filtros) },
     { id: "ranking", titulo: "Provincias líderes", abierta: false, crear: () => seccionRanking(q, () => filtros, cambiar) },
     { id: "evolucion", titulo: "Evolución del rendimiento", abierta: false, crear: () => seccionEvolucion(q, () => filtros, cambiar) },
-    { id: "mapa", titulo: "Mapa por departamento", abierta: false, crear: () => seccionMapa(q, () => filtros, cambiar) },
+    { id: "mapa", titulo: "Mapa por departamento", abierta: false, crear: () => seccionMapa(q, () => filtros, cambiar, analizarDepartamento) },
+    { id: "departamento", titulo: "Tu departamento", abierta: false, crear: () => seccionDepartamento(q, () => filtros, cambiar) },
   ];
+
+  /** Desde el mapa: abre "Tu departamento" con ese departamento cargado. */
+  function analizarDepartamento(codigo: string) {
+    analytics.departamentoElegido("mapa", codigo);
+    cambiar({ depto: codigo, vsDepto: filtros.vsDepto === codigo ? null : filtros.vsDepto });
+    const seccion = document.getElementById("departamento") as HTMLDetailsElement | null;
+    if (seccion) {
+      seccion.open = true;
+      seccion.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  }
 
   const elementos = definiciones.map((d) =>
     h("details", { class: "seccion", id: d.id, open: d.abierta }, h("summary", {}, h("h2", {}, d.titulo)), h("div", { class: "cuerpo" })),

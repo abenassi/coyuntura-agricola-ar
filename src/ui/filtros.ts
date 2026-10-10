@@ -4,6 +4,7 @@
  * listas cerradas: un parámetro inválido cae a su default y nunca llega a una consulta al MCP.
  */
 
+import type { RangoDepto, VariableDepto } from "../datos/calculos";
 import { CULTIVOS, type CultivoId, type MetricaRanking } from "../datos/tipos";
 
 /** Provincias con los nombres que usa el SIIA. CABA no tiene producción agrícola. */
@@ -35,6 +36,8 @@ export const PROVINCIAS = [
 
 export const METRICAS_RANKING = ["produccion", "sup_sembrada", "rendimiento"] as const;
 export const METRICAS_MAPA = ["rendimiento", "produccion"] as const;
+export const VARIABLES_DEPTO = ["rendimiento", "produccion", "sup_sembrada", "sup_cosechada"] as const;
+export const RANGOS_DEPTO = ["20", "10", "todo"] as const;
 export type MetricaMapa = (typeof METRICAS_MAPA)[number];
 
 export interface Filtros {
@@ -47,7 +50,14 @@ export interface Filtros {
   provincia: string | null;
   metricaRanking: MetricaRanking;
   metricaMapa: MetricaMapa;
+  /** Departamento del análisis por departamento (código INDEC), y el de comparación. */
+  depto: string | null;
+  vsDepto: string | null;
+  variableDepto: VariableDepto;
+  rangoDepto: RangoDepto;
 }
+
+const CODIGO_DEPTO = /^[0-9]{5}$/;
 
 function elegir<T extends string>(valor: string | null, opciones: readonly T[], defecto: T): T {
   return (opciones as readonly string[]).includes(valor ?? "") ? (valor as T) : defecto;
@@ -80,7 +90,17 @@ export function leerFiltros(search: string, campanias: string[]): Filtros {
     provincia: (PROVINCIAS as readonly string[]).includes(provincia) ? provincia : null,
     metricaRanking: elegir(p.get("ranking"), METRICAS_RANKING, "produccion"),
     metricaMapa: elegir(p.get("mapa"), METRICAS_MAPA, "rendimiento"),
+    ...deptos(p.get("depto"), p.get("vs_depto")),
+    variableDepto: elegir(p.get("variable"), VARIABLES_DEPTO, "rendimiento"),
+    rangoDepto: elegir(p.get("rango"), RANGOS_DEPTO, "20"),
   };
+}
+
+/** Sólo códigos INDEC de 5 dígitos; si no hay departamento o es el mismo, no hay comparación. */
+function deptos(depto: string | null, vs: string | null): { depto: string | null; vsDepto: string | null } {
+  const d = depto && CODIGO_DEPTO.test(depto) ? depto : null;
+  const v = d && vs && CODIGO_DEPTO.test(vs) && vs !== d ? vs : null;
+  return { depto: d, vsDepto: v };
 }
 
 /** Query string con sólo lo que difiere de los defaults (vacío si todo está en default). */
@@ -93,6 +113,10 @@ export function escribirFiltros(f: Filtros, campanias: string[]): string {
   if (f.provincia) p.set("provincia", f.provincia);
   if (f.metricaRanking !== defecto.metricaRanking) p.set("ranking", f.metricaRanking);
   if (f.metricaMapa !== defecto.metricaMapa) p.set("mapa", f.metricaMapa);
+  if (f.depto) p.set("depto", f.depto);
+  if (f.depto && f.vsDepto) p.set("vs_depto", f.vsDepto);
+  if (f.variableDepto !== defecto.variableDepto) p.set("variable", f.variableDepto);
+  if (f.rangoDepto !== defecto.rangoDepto) p.set("rango", f.rangoDepto);
   const texto = p.toString();
   return texto ? `?${texto}` : "";
 }

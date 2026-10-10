@@ -1,6 +1,7 @@
 /** Cuentas que el informe hace sobre las respuestas del MCP. Funciones puras, sin red. */
 
-import { CULTIVOS, type Balance, type CultivoId, type CultivosDisponibles, type FilaBalance } from "./tipos";
+import { normalizar } from "../geo/cruce";
+import { CULTIVOS, type Balance, type CultivoId, type CultivosDisponibles, type FilaBalance, type FilaEstimacion } from "./tipos";
 
 /** Primera campaña del selector: desde ahí el SIIA separa soja de 1ra y de 2da. */
 export const PRIMERA_CAMPANIA = "2000/2001";
@@ -76,4 +77,45 @@ export function quantiles(valores: number[], clases: number): number[] {
   const orden = [...valores].sort((a, b) => a - b);
   if (!orden.length) return [];
   return Array.from({ length: clases - 1 }, (_, i) => orden[Math.floor(((i + 1) * orden.length) / clases)]!);
+}
+
+export type VariableDepto = "rendimiento" | "produccion" | "sup_sembrada" | "sup_cosechada";
+export type RangoDepto = "10" | "20" | "todo";
+
+export interface PuntoSerie {
+  campania: string;
+  valor: number;
+}
+
+const CAMPO: Record<VariableDepto, keyof FilaEstimacion> = {
+  rendimiento: "rendimiento_kg_ha",
+  produccion: "produccion_tn",
+  sup_sembrada: "sup_sembrada_ha",
+  sup_cosechada: "sup_cosechada_ha",
+};
+
+/**
+ * La historia de un departamento en una variable, de la campaña más vieja a la más nueva.
+ *
+ * El filtro por departamento del SIIA es una búsqueda parcial ("San Martín" también trae "General
+ * San Martín"), así que acá se queda sólo con el nombre exacto.
+ */
+export function serieDepartamento(filas: FilaEstimacion[], nombre: string, variable: VariableDepto): PuntoSerie[] {
+  const buscado = normalizar(nombre);
+  return filas
+    .filter((f) => normalizar(f.departamento) === buscado)
+    .map((f) => ({ campania: f.campania, valor: f[CAMPO[variable]] as number }))
+    .sort((a, b) => a.campania.localeCompare(b.campania));
+}
+
+/** Las últimas 10 o 20 campañas, o toda la serie. */
+export function recortarRango<T>(serie: T[], rango: RangoDepto): T[] {
+  return rango === "todo" ? serie : serie.slice(-Number(rango));
+}
+
+/** Promedio de las últimas `n` campañas de la serie, o null si está vacía. */
+export function promedioUltimas(serie: PuntoSerie[], n: number): number | null {
+  const ultimas = serie.slice(-n);
+  if (!ultimas.length) return null;
+  return ultimas.reduce((s, p) => s + p.valor, 0) / ultimas.length;
 }

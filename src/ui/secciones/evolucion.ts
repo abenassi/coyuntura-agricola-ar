@@ -146,6 +146,7 @@ function dibujar(lienzo: HTMLCanvasElement, ev: Evolucion, campania: string | nu
         },
       },
       plugins: {
+        legend: { display: false },
         tooltip: {
           callbacks: {
             label: (ctx) => `${ctx.dataset.label}: ${kgHa(ctx.parsed.y)}`,

@@ -1,0 +1,519 @@
+{
+ "cultivo": "soja total",
+ "filtros": {
+  "campania": "todas",
+  "provincia": "Santa Fe",
+  "departamento": "General López"
+ },
+ "datos": [
+  {
+   "campania": "2024/2025",
+   "provincia": "Santa Fe",
+   "departamento": "General López",
+   "sup_sembrada_ha": 590575,
+   "sup_cosechada_ha": 590575,
+   "produccion_tn": 1870873,
+   "rendimiento_kg_ha": 3168
+  },
+  {
+   "campania": "2023/2024",
+   "provincia": "Santa Fe",
+   "departamento": "General López",
+   "sup_sembrada_ha": 541408,
+   "sup_cosechada_ha": 534908,
+   "produccion_tn": 1799628,
+   "rendimiento_kg_ha": 3364
+  },
+  {
+   "campania": "2022/2023",
+   "provincia": "Santa Fe",
+   "departamento": "General López",
+   "sup_sembrada_ha": 530000,
+   "sup_cosechada_ha": 460000,
+   "produccion_tn": 672000,
+   "rendimiento_kg_ha": 1461
+  },
+  {
+   "campania": "2021/2022",
+   "provincia": "Santa Fe",
+   "departamento": "General López",
+   "sup_sembrada_ha": 520000,
+   "sup_cosechada_ha": 520000,
+   "produccion_tn": 1813500,
+   "rendimiento_kg_ha": 3488
+  },
+  {
+   "campania": "2020/2021",
+   "provincia": "Santa Fe",
+   "departamento": "General López",
+   "sup_sembrada_ha": 534000,
+   "sup_cosechada_ha": 534000,
+   "produccion_tn": 1762600,
+   "rendimiento_kg_ha": 3301
+  },
+  {
+   "campania": "2019/2020",
+   "provincia": "Santa Fe",
+   "departamento": "General López",
+   "sup_sembrada_ha": 538500,
+   "sup_cosechada_ha": 538500,
+   "produccion_tn": 2024850,
+   "rendimiento_kg_ha": 3760
+  },
+  {
+   "campania": "2018/2019",
+   "provincia": "Santa Fe",
+   "departamento": "General López",
+   "sup_sembrada_ha": 553000,
+   "sup_cosechada_ha": 553000,
+   "produccion_tn": 2167600,
+   "rendimiento_kg_ha": 3920
+  },
+  {
+   "campania": "2017/2018",
+   "provincia": "Santa Fe",
+   "departamento": "General López",
+   "sup_sembrada_ha": 540350,
+   "sup_cosechada_ha": 540350,
+   "produccion_tn": 1580813,
+   "rendimiento_kg_ha": 2926
+  },
+  {
+   "campania": "2016/2017",
+   "provincia": "Santa Fe",
+   "departamento": "General López",
+   "sup_sembrada_ha": 433183,
+   "sup_cosechada_ha": 417183,
+   "produccion_tn": 1449380,
+   "rendimiento_kg_ha": 3474
+  },
+  {
+   "campania": "2015/2016",
+   "provincia": "Santa Fe",
+   "departamento": "General López",
+   "sup_sembrada_ha": 610327,
+   "sup_cosechada_ha": 563942,
+   "produccion_tn": 1841028,
+   "rendimiento_kg_ha": 3265
+  },
+  {
+   "campania": "2014/2015",
+   "provincia": "Santa Fe",
+   "departamento": "General López",
+   "sup_sembrada_ha": 555020,
+   "sup_cosechada_ha": 555020,
+   "produccion_tn": 2289900,
+   "rendimiento_kg_ha": 4126
+  },
+  {
+   "campania": "2013/2014",
+   "provincia": "Santa Fe",
+   "departamento": "General López",
+   "sup_sembrada_ha": 610000,
+   "sup_cosechada_ha": 603500,
+   "produccion_tn": 1726600,
+   "rendimiento_kg_ha": 2861
+  },
+  {
+   "campania": "2012/2013",
+   "provincia": "Santa Fe",
+   "departamento": "General López",
+   "sup_sembrada_ha": 611500,
+   "sup_cosechada_ha": 606000,
+   "produccion_tn": 2234180,
+   "rendimiento_kg_ha": 3687
+  },
+  {
+   "campania": "2011/2012",
+   "provincia": "Santa Fe",
+   "departamento": "General López",
+   "sup_sembrada_ha": 660000,
+   "sup_cosechada_ha": 660000,
+   "produccion_tn": 1798500,
+   "rendimiento_kg_ha": 2725
+  },
+  {
+   "campania": "2010/2011",
+   "provincia": "Santa Fe",
+   "departamento": "General López",
+   "sup_sembrada_ha": 663000,
+   "sup_cosechada_ha": 663000,
+   "produccion_tn": 2273400,
+   "rendimiento_kg_ha": 3429
+  },
+  {
+   "campania": "2009/2010",
+   "provincia": "Santa Fe",
+   "departamento": "General López",
+   "sup_sembrada_ha": 662000,
+   "sup_cosechada_ha": 662000,
+   "produccion_tn": 2352800,
+   "rendimiento_kg_ha": 3554
+  },
+  {
+   "campania": "2008/2009",
+   "provincia": "Santa Fe",
+   "departamento": "General López",
+   "sup_sembrada_ha": 735310,
+   "sup_cosechada_ha": 735310,
+   "produccion_tn": 1930208,
+   "rendimiento_kg_ha": 2625
+  },
+  {
+   "campania": "2007/2008",
+   "provincia": "Santa Fe",
+   "departamento": "General López",
+   "sup_sembrada_ha": 639400,
+   "sup_cosechada_ha": 639400,
+   "produccion_tn": 2450000,
+   "rendimiento_kg_ha": 3832
+  },
+  {
+   "campania": "2006/2007",
+   "provincia": "Santa Fe",
+   "departamento": "General López",
+   "sup_sembrada_ha": 652300,
+   "sup_cosechada_ha": 636105,
+   "produccion_tn": 2276454,
+   "rendimiento_kg_ha": 3579
+  },
+  {
+   "campania": "2005/2006",
+   "provincia": "Santa Fe",
+   "departamento": "General López",
+   "sup_sembrada_ha": 650500,
+   "sup_cosechada_ha": 638328,
+   "produccion_tn": 2293222,
+   "rendimiento_kg_ha": 3593
+  },
+  {
+   "campania": "2004/2005",
+   "provincia": "Santa Fe",
+   "departamento": "General López",
+   "sup_sembrada_ha": 646298,
+   "sup_cosechada_ha": 644177,
+   "produccion_tn": 2290181,
+   "rendimiento_kg_ha": 3555
+  },
+  {
+   "campania": "2003/2004",
+   "provincia": "Santa Fe",
+   "departamento": "General López",
+   "sup_sembrada_ha": 665000,
+   "sup_cosechada_ha": 655000,
+   "produccion_tn": 2000500,
+   "rendimiento_kg_ha": 3054
+  },
+  {
+   "campania": "2002/2003",
+   "provincia": "Santa Fe",
+   "departamento": "General López",
+   "sup_sembrada_ha": 630000,
+   "sup_cosechada_ha": 618000,
+   "produccion_tn": 2090000,
+   "rendimiento_kg_ha": 3382
+  },
+  {
+   "campania": "2001/2002",
+   "provincia": "Santa Fe",
+   "departamento": "General López",
+   "sup_sembrada_ha": 630000,
+   "sup_cosechada_ha": 616550,
+   "produccion_tn": 1865600,
+   "rendimiento_kg_ha": 3026
+  },
+  {
+   "campania": "2000/2001",
+   "provincia": "Santa Fe",
+   "departamento": "General López",
+   "sup_sembrada_ha": 600500,
+   "sup_cosechada_ha": 600500,
+   "produccion_tn": 1629500,
+   "rendimiento_kg_ha": 2714
+  },
+  {
+   "campania": "1999/2000",
+   "provincia": "Santa Fe",
+   "departamento": "General López",
+   "sup_sembrada_ha": 522000,
+   "sup_cosechada_ha": 521200,
+   "produccion_tn": 1470000,
+   "rendimiento_kg_ha": 2820
+  },
+  {
+   "campania": "1998/1999",
+   "provincia": "Santa Fe",
+   "departamento": "General López",
+   "sup_sembrada_ha": 514000,
+   "sup_cosechada_ha": 510000,
+   "produccion_tn": 1540000,
+   "rendimiento_kg_ha": 3020
+  },
+  {
+   "campania": "1997/1998",
+   "provincia": "Santa Fe",
+   "departamento": "General López",
+   "sup_sembrada_ha": 505000,
+   "sup_cosechada_ha": 503700,
+   "produccion_tn": 1386100,
+   "rendimiento_kg_ha": 2752
+  },
+  {
+   "campania": "1996/1997",
+   "provincia": "Santa Fe",
+   "departamento": "General López",
+   "sup_sembrada_ha": 485000,
+   "sup_cosechada_ha": 482500,
+   "produccion_tn": 787700,
+   "rendimiento_kg_ha": 1633
+  },
+  {
+   "campania": "1995/1996",
+   "provincia": "Santa Fe",
+   "departamento": "General López",
+   "sup_sembrada_ha": 422300,
+   "sup_cosechada_ha": 414800,
+   "produccion_tn": 827700,
+   "rendimiento_kg_ha": 1995
+  },
+  {
+   "campania": "1994/1995",
+   "provincia": "Santa Fe",
+   "departamento": "General López",
+   "sup_sembrada_ha": 440000,
+   "sup_cosechada_ha": 440000,
+   "produccion_tn": 943400,
+   "rendimiento_kg_ha": 2144
+  },
+  {
+   "campania": "1993/1994",
+   "provincia": "Santa Fe",
+   "departamento": "General López",
+   "sup_sembrada_ha": 460000,
+   "sup_cosechada_ha": 460000,
+   "produccion_tn": 999600,
+   "rendimiento_kg_ha": 2173
+  },
+  {
+   "campania": "1992/1993",
+   "provincia": "Santa Fe",
+   "departamento": "General López",
+   "sup_sembrada_ha": 417000,
+   "sup_cosechada_ha": 413000,
+   "produccion_tn": 918200,
+   "rendimiento_kg_ha": 2223
+  },
+  {
+   "campania": "1991/1992",
+   "provincia": "Santa Fe",
+   "departamento": "General López",
+   "sup_sembrada_ha": 430000,
+   "sup_cosechada_ha": 430000,
+   "produccion_tn": 1005500,
+   "rendimiento_kg_ha": 2338
+  },
+  {
+   "campania": "1990/1991",
+   "provincia": "Santa Fe",
+   "departamento": "General López",
+   "sup_sembrada_ha": 450000,
+   "sup_cosechada_ha": 444000,
+   "produccion_tn": 1145000,
+   "rendimiento_kg_ha": 2579
+  },
+  {
+   "campania": "1989/1990",
+   "provincia": "Santa Fe",
+   "departamento": "General López",
+   "sup_sembrada_ha": 350000,
+   "sup_cosechada_ha": 346500,
+   "produccion_tn": 756400,
+   "rendimiento_kg_ha": 2183
+  },
+  {
+   "campania": "1988/1989",
+   "provincia": "Santa Fe",
+   "departamento": "General López",
+   "sup_sembrada_ha": 290000,
+   "sup_cosechada_ha": 200000,
+   "produccion_tn": 325000,
+   "rendimiento_kg_ha": 1625
+  },
+  {
+   "campania": "1987/1988",
+   "provincia": "Santa Fe",
+   "departamento": "General López",
+   "sup_sembrada_ha": 290000,
+   "sup_cosechada_ha": 290000,
+   "produccion_tn": 690300,
+   "rendimiento_kg_ha": 2380
+  },
+  {
+   "campania": "1986/1987",
+   "provincia": "Santa Fe",
+   "departamento": "General López",
+   "sup_sembrada_ha": 240000,
+   "sup_cosechada_ha": 230200,
+   "produccion_tn": 483000,
+   "rendimiento_kg_ha": 2098
+  },
+  {
+   "campania": "1985/1986",
+   "provincia": "Santa Fe",
+   "departamento": "General López",
+   "sup_sembrada_ha": 220000,
+   "sup_cosechada_ha": 219100,
+   "produccion_tn": 471480,
+   "rendimiento_kg_ha": 2152
+  },
+  {
+   "campania": "1984/1985",
+   "provincia": "Santa Fe",
+   "departamento": "General López",
+   "sup_sembrada_ha": 222000,
+   "sup_cosechada_ha": 218500,
+   "produccion_tn": 492850,
+   "rendimiento_kg_ha": 2256
+  },
+  {
+   "campania": "1983/1984",
+   "provincia": "Santa Fe",
+   "departamento": "General López",
+   "sup_sembrada_ha": 170000,
+   "sup_cosechada_ha": 169500,
+   "produccion_tn": 394000,
+   "rendimiento_kg_ha": 2324
+  },
+  {
+   "campania": "1982/1983",
+   "provincia": "Santa Fe",
+   "departamento": "General López",
+   "sup_sembrada_ha": 153000,
+   "sup_cosechada_ha": 153000,
+   "produccion_tn": 306000,
+   "rendimiento_kg_ha": 2000
+  },
+  {
+   "campania": "1981/1982",
+   "provincia": "Santa Fe",
+   "departamento": "General López",
+   "sup_sembrada_ha": 146000,
+   "sup_cosechada_ha": 143000,
+   "produccion_tn": 300300,
+   "rendimiento_kg_ha": 2100
+  },
+  {
+   "campania": "1980/1981",
+   "provincia": "Santa Fe",
+   "departamento": "General López",
+   "sup_sembrada_ha": 117400,
+   "sup_cosechada_ha": 116400,
+   "produccion_tn": 230000,
+   "rendimiento_kg_ha": 1976
+  },
+  {
+   "campania": "1979/1980",
+   "provincia": "Santa Fe",
+   "departamento": "General López",
+   "sup_sembrada_ha": 150500,
+   "sup_cosechada_ha": 149700,
+   "produccion_tn": 250600,
+   "rendimiento_kg_ha": 1674
+  },
+  {
+   "campania": "1978/1979",
+   "provincia": "Santa Fe",
+   "departamento": "General López",
+   "sup_sembrada_ha": 125000,
+   "sup_cosechada_ha": 123000,
+   "produccion_tn": 308000,
+   "rendimiento_kg_ha": 2504
+  },
+  {
+   "campania": "1977/1978",
+   "provincia": "Santa Fe",
+   "departamento": "General López",
+   "sup_sembrada_ha": 115400,
+   "sup_cosechada_ha": 110000,
+   "produccion_tn": 260000,
+   "rendimiento_kg_ha": 2364
+  },
+  {
+   "campania": "1976/1977",
+   "provincia": "Santa Fe",
+   "departamento": "General López",
+   "sup_sembrada_ha": 30000,
+   "sup_cosechada_ha": 28000,
+   "produccion_tn": 60200,
+   "rendimiento_kg_ha": 2150
+  },
+  {
+   "campania": "1975/1976",
+   "provincia": "Santa Fe",
+   "departamento": "General López",
+   "sup_sembrada_ha": 20000,
+   "sup_cosechada_ha": 20000,
+   "produccion_tn": 33000,
+   "rendimiento_kg_ha": 1650
+  },
+  {
+   "campania": "1974/1975",
+   "provincia": "Santa Fe",
+   "departamento": "General López",
+   "sup_sembrada_ha": 20000,
+   "sup_cosechada_ha": 17000,
+   "produccion_tn": 22200,
+   "rendimiento_kg_ha": 1306
+  },
+  {
+   "campania": "1973/1974",
+   "provincia": "Santa Fe",
+   "departamento": "General López",
+   "sup_sembrada_ha": 25000,
+   "sup_cosechada_ha": 22500,
+   "produccion_tn": 25000,
+   "rendimiento_kg_ha": 1111
+  },
+  {
+   "campania": "1972/1973",
+   "provincia": "Santa Fe",
+   "departamento": "General López",
+   "sup_sembrada_ha": 7000,
+   "sup_cosechada_ha": 6000,
+   "produccion_tn": 12000,
+   "rendimiento_kg_ha": 2000
+  },
+  {
+   "campania": "1971/1972",
+   "provincia": "Santa Fe",
+   "departamento": "General López",
+   "sup_sembrada_ha": 1000,
+   "sup_cosechada_ha": 1000,
+   "produccion_tn": 1100,
+   "rendimiento_kg_ha": 1100
+  },
+  {
+   "campania": "1970/1971",
+   "provincia": "Santa Fe",
+   "departamento": "General López",
+   "sup_sembrada_ha": 300,
+   "sup_cosechada_ha": 300,
+   "produccion_tn": 500,
+   "rendimiento_kg_ha": 1667
+  },
+  {
+   "campania": "1969/1970",
+   "provincia": "Santa Fe",
+   "departamento": "General López",
+   "sup_sembrada_ha": 200,
+   "sup_cosechada_ha": 100,
+   "produccion_tn": 100,
+   "rendimiento_kg_ha": 1000
+  }
+ ],
+ "total": 56,
+ "devueltos": 56,
+ "fuente": "MAGyP — Sistema Integrado de Información Agropecuaria (SIIA)",
+ "fuente_url": "https://datos.magyp.gob.ar/dataset/estimaciones-agricolas",
+ "freshness": "current"
+}

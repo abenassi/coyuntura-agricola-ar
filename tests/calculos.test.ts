@@ -7,7 +7,7 @@ import {
   variacionPct,
 } from "../src/datos/calculos";
 import { consultas } from "../src/datos/consultas";
-import type { Balance, CultivosDisponibles } from "../src/datos/tipos";
+import type { Balance, CultivosDisponibles, Estimaciones } from "../src/datos/tipos";
 import b2025 from "./fixtures/balance-2024-2025.json";
 import b2024 from "./fixtures/balance-2023-2024.json";
 
@@ -107,5 +107,34 @@ describe("quantiles", () => {
   });
   test("sin valores no hay cortes", () => {
     expect(quantiles([], 5)).toEqual([]);
+  });
+});
+
+import { serieDepartamento, recortarRango, promedioUltimas } from "../src/datos/calculos";
+import gl from "./fixtures/estimaciones-soja-general-lopez.json";
+
+describe("serieDepartamento", () => {
+  const filas = (gl as Estimaciones).datos;
+
+  test("ordena de la campaña más vieja a la más nueva y toma la variable pedida", () => {
+    const s = serieDepartamento(filas, "General López", "rendimiento");
+    expect(s[0]).toEqual({ campania: "1969/1970", valor: 1000 });
+    expect(s.at(-1)).toEqual({ campania: "2024/2025", valor: 3168 });
+    expect(serieDepartamento(filas, "General López", "sup_cosechada").at(-1)!.valor).toBe(590575);
+  });
+
+  test("descarta filas de otros departamentos que trajo la búsqueda parcial", () => {
+    const mezcla = [...filas, { ...filas[0]!, departamento: "General López Norte", rendimiento_kg_ha: 9999 }];
+    expect(serieDepartamento(mezcla, "General López", "rendimiento").some((p) => p.valor === 9999)).toBe(false);
+  });
+
+  test("recortarRango y promedioUltimas", () => {
+    const s = serieDepartamento(filas, "General López", "rendimiento");
+    expect(recortarRango(s, "10")).toHaveLength(10);
+    expect(recortarRango(s, "10")[0]!.campania).toBe("2015/2016");
+    expect(recortarRango(s, "todo")).toHaveLength(56);
+    // 2015/16 a 2024/25: 3265, 3474, 2926, 3920, 3760, 3301, 3488, 1461, 3364, 3168
+    expect(promedioUltimas(s, 10)).toBeCloseTo(32127 / 10, 6);
+    expect(promedioUltimas([], 10)).toBeNull();
   });
 });

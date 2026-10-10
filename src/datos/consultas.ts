@@ -55,6 +55,27 @@ export function consultas(cliente: Pick<ClienteMcp, "llamar">) {
         limit: LIMITE_ESTIMACIONES,
       }),
 
+    /**
+     * Toda la historia de un departamento para un cultivo (desde 1969 cuando hay datos). El nombre
+     * tiene que ser el del SIIA (ver geo/departamentos.ts): el filtro distingue tildes y es parcial.
+     */
+    historiaDepartamento: (c: CultivoId, provincia: string, departamento: string) =>
+      cliente.llamar<Estimaciones>("siia_estimaciones_cultivo", {
+        cultivo: cultivo(c).siia,
+        provincia,
+        departamento,
+        // El máximo de la tool: si el nombre coincide en parte con otro departamento, vienen los dos.
+        limit: 500,
+      }),
+
+    /** Rendimiento de una provincia en las últimas 30 campañas (el máximo de la tool). */
+    evolucionProvincia30: (c: CultivoId, provincia: string) =>
+      cliente.llamar<Evolucion>("siia_evolucion_rendimiento", {
+        cultivo: cultivo(c).siia,
+        provincia,
+        campanias: 30,
+      }),
+
     /** Consultas que le quedan al visitante. No consume cuota. */
     cuota: () => cliente.llamar<Cuota>("consultar_cuota", {}),
   };

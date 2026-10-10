@@ -12,6 +12,10 @@ describe("leerFiltros", () => {
       provincia: null,
       metricaRanking: "produccion",
       metricaMapa: "rendimiento",
+      depto: null,
+      vsDepto: null,
+      variableDepto: "rendimiento",
+      rangoDepto: "20",
     });
   });
 
@@ -27,6 +31,10 @@ describe("leerFiltros", () => {
       provincia: "La Pampa",
       metricaRanking: "rendimiento",
       metricaMapa: "produccion",
+      depto: null,
+      vsDepto: null,
+      variableDepto: "rendimiento",
+      rangoDepto: "20",
     });
   });
 
@@ -59,6 +67,10 @@ describe("escribirFiltros", () => {
       provincia: "Córdoba",
       metricaRanking: "sup_sembrada",
       metricaMapa: "produccion",
+      depto: null,
+      vsDepto: null,
+      variableDepto: "rendimiento",
+      rangoDepto: "20",
     };
     expect(leerFiltros(escribirFiltros(f, CAMPANIAS), CAMPANIAS)).toEqual(f);
   });
@@ -72,4 +84,38 @@ test("PROVINCIAS usa los nombres del SIIA", () => {
   expect(PROVINCIAS).toContain("Córdoba");
   expect(PROVINCIAS).toContain("Santiago del Estero");
   expect(PROVINCIAS).not.toContain("Ciudad Autónoma de Buenos Aires");
+});
+
+describe("filtros del análisis por departamento", () => {
+  test("defaults: sin departamento, rinde, últimas 20 campañas", () => {
+    const f = leerFiltros("", CAMPANIAS);
+    expect(f.depto).toBeNull();
+    expect(f.vsDepto).toBeNull();
+    expect(f.variableDepto).toBe("rendimiento");
+    expect(f.rangoDepto).toBe("20");
+  });
+
+  test("lee códigos INDEC válidos y descarta basura", () => {
+    expect(leerFiltros("?depto=82042&vs_depto=82014&variable=produccion&rango=todo", CAMPANIAS)).toMatchObject({
+      depto: "82042",
+      vsDepto: "82014",
+      variableDepto: "produccion",
+      rangoDepto: "todo",
+    });
+    expect(leerFiltros("?depto=8204&vs_depto=abcde&variable=x&rango=7", CAMPANIAS)).toMatchObject({
+      depto: null,
+      vsDepto: null,
+      variableDepto: "rendimiento",
+      rangoDepto: "20",
+    });
+  });
+
+  test("comparar con el mismo departamento no tiene sentido: se descarta", () => {
+    expect(leerFiltros("?depto=82042&vs_depto=82042", CAMPANIAS).vsDepto).toBeNull();
+  });
+
+  test("ida y vuelta por la URL", () => {
+    const f = leerFiltros("?depto=82042&vs_depto=82014&variable=sup_sembrada&rango=10", CAMPANIAS);
+    expect(leerFiltros(escribirFiltros(f, CAMPANIAS), CAMPANIAS)).toEqual(f);
+  });
 });

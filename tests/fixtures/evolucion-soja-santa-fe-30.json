@@ -1,0 +1,251 @@
+{
+ "cultivo": "soja total",
+ "provincia": "Santa Fe",
+ "campanias_incluidas": 30,
+ "evolucion": [
+  {
+   "campania": "1995/1996",
+   "sup_sembrada_ha": 2441300,
+   "sup_cosechada_ha": 2423800,
+   "produccion_tn": 5705900,
+   "rendimiento_kg_ha": 2354,
+   "variacion_pct": null
+  },
+  {
+   "campania": "1996/1997",
+   "sup_sembrada_ha": 2543200,
+   "sup_cosechada_ha": 2447800,
+   "produccion_tn": 4163900,
+   "rendimiento_kg_ha": 1701,
+   "variacion_pct": -27.74
+  },
+  {
+   "campania": "1997/1998",
+   "sup_sembrada_ha": 2608500,
+   "sup_cosechada_ha": 2546200,
+   "produccion_tn": 7310500,
+   "rendimiento_kg_ha": 2871,
+   "variacion_pct": 68.78
+  },
+  {
+   "campania": "1998/1999",
+   "sup_sembrada_ha": 2753800,
+   "sup_cosechada_ha": 2741200,
+   "produccion_tn": 7300000,
+   "rendimiento_kg_ha": 2663,
+   "variacion_pct": -7.24
+  },
+  {
+   "campania": "1999/2000",
+   "sup_sembrada_ha": 2873550,
+   "sup_cosechada_ha": 2863400,
+   "produccion_tn": 6637500,
+   "rendimiento_kg_ha": 2318,
+   "variacion_pct": -12.96
+  },
+  {
+   "campania": "2000/2001",
+   "sup_sembrada_ha": 3117150,
+   "sup_cosechada_ha": 3087650,
+   "produccion_tn": 8657700,
+   "rendimiento_kg_ha": 2804,
+   "variacion_pct": 20.97
+  },
+  {
+   "campania": "2001/2002",
+   "sup_sembrada_ha": 3212300,
+   "sup_cosechada_ha": 3148850,
+   "produccion_tn": 8350300,
+   "rendimiento_kg_ha": 2652,
+   "variacion_pct": -5.42
+  },
+  {
+   "campania": "2002/2003",
+   "sup_sembrada_ha": 3319000,
+   "sup_cosechada_ha": 3260000,
+   "produccion_tn": 10223500,
+   "rendimiento_kg_ha": 3136,
+   "variacion_pct": 18.25
+  },
+  {
+   "campania": "2003/2004",
+   "sup_sembrada_ha": 3558000,
+   "sup_cosechada_ha": 3531500,
+   "produccion_tn": 9141950,
+   "rendimiento_kg_ha": 2589,
+   "variacion_pct": -17.44
+  },
+  {
+   "campania": "2004/2005",
+   "sup_sembrada_ha": 3531099,
+   "sup_cosechada_ha": 3483586,
+   "produccion_tn": 10448196,
+   "rendimiento_kg_ha": 2999,
+   "variacion_pct": 15.84
+  },
+  {
+   "campania": "2005/2006",
+   "sup_sembrada_ha": 3553290,
+   "sup_cosechada_ha": 3524318,
+   "produccion_tn": 10275416,
+   "rendimiento_kg_ha": 2916,
+   "variacion_pct": -2.77
+  },
+  {
+   "campania": "2006/2007",
+   "sup_sembrada_ha": 3474600,
+   "sup_cosechada_ha": 3433555,
+   "produccion_tn": 11295735,
+   "rendimiento_kg_ha": 3290,
+   "variacion_pct": 12.83
+  },
+  {
+   "campania": "2007/2008",
+   "sup_sembrada_ha": 3492200,
+   "sup_cosechada_ha": 3427400,
+   "produccion_tn": 11479999,
+   "rendimiento_kg_ha": 3349,
+   "variacion_pct": 1.79
+  },
+  {
+   "campania": "2008/2009",
+   "sup_sembrada_ha": 3440863,
+   "sup_cosechada_ha": 3354963,
+   "produccion_tn": 8061892,
+   "rendimiento_kg_ha": 2403,
+   "variacion_pct": -28.25
+  },
+  {
+   "campania": "2009/2010",
+   "sup_sembrada_ha": 3514279,
+   "sup_cosechada_ha": 3509979,
+   "produccion_tn": 12032550,
+   "rendimiento_kg_ha": 3428,
+   "variacion_pct": 42.66
+  },
+  {
+   "campania": "2010/2011",
+   "sup_sembrada_ha": 3107737,
+   "sup_cosechada_ha": 3094737,
+   "produccion_tn": 9741349,
+   "rendimiento_kg_ha": 3148,
+   "variacion_pct": -8.17
+  },
+  {
+   "campania": "2011/2012",
+   "sup_sembrada_ha": 3107800,
+   "sup_cosechada_ha": 3007800,
+   "produccion_tn": 8176630,
+   "rendimiento_kg_ha": 2718,
+   "variacion_pct": -13.66
+  },
+  {
+   "campania": "2012/2013",
+   "sup_sembrada_ha": 3128500,
+   "sup_cosechada_ha": 3123000,
+   "produccion_tn": 10383917,
+   "rendimiento_kg_ha": 3325,
+   "variacion_pct": 22.33
+  },
+  {
+   "campania": "2013/2014",
+   "sup_sembrada_ha": 3254768,
+   "sup_cosechada_ha": 3209368,
+   "produccion_tn": 9958834,
+   "rendimiento_kg_ha": 3103,
+   "variacion_pct": -6.68
+  },
+  {
+   "campania": "2014/2015",
+   "sup_sembrada_ha": 3224550,
+   "sup_cosechada_ha": 3126150,
+   "produccion_tn": 11804131,
+   "rendimiento_kg_ha": 3776,
+   "variacion_pct": 21.69
+  },
+  {
+   "campania": "2015/2016",
+   "sup_sembrada_ha": 3468912,
+   "sup_cosechada_ha": 3123327,
+   "produccion_tn": 8317217,
+   "rendimiento_kg_ha": 2663,
+   "variacion_pct": -29.48
+  },
+  {
+   "campania": "2016/2017",
+   "sup_sembrada_ha": 2957363,
+   "sup_cosechada_ha": 2831723,
+   "produccion_tn": 9762280,
+   "rendimiento_kg_ha": 3447,
+   "variacion_pct": 29.44
+  },
+  {
+   "campania": "2017/2018",
+   "sup_sembrada_ha": 3011720,
+   "sup_cosechada_ha": 2839620,
+   "produccion_tn": 6852404,
+   "rendimiento_kg_ha": 2413,
+   "variacion_pct": -30.0
+  },
+  {
+   "campania": "2018/2019",
+   "sup_sembrada_ha": 2838202,
+   "sup_cosechada_ha": 2734302,
+   "produccion_tn": 10520091,
+   "rendimiento_kg_ha": 3847,
+   "variacion_pct": 59.43
+  },
+  {
+   "campania": "2019/2020",
+   "sup_sembrada_ha": 3007360,
+   "sup_cosechada_ha": 2974260,
+   "produccion_tn": 9399967,
+   "rendimiento_kg_ha": 3160,
+   "variacion_pct": -17.86
+  },
+  {
+   "campania": "2020/2021",
+   "sup_sembrada_ha": 3038334,
+   "sup_cosechada_ha": 3038334,
+   "produccion_tn": 9280032,
+   "rendimiento_kg_ha": 3054,
+   "variacion_pct": -3.35
+  },
+  {
+   "campania": "2021/2022",
+   "sup_sembrada_ha": 2877651,
+   "sup_cosechada_ha": 2858551,
+   "produccion_tn": 8272320,
+   "rendimiento_kg_ha": 2894,
+   "variacion_pct": -5.24
+  },
+  {
+   "campania": "2022/2023",
+   "sup_sembrada_ha": 2873207,
+   "sup_cosechada_ha": 2472867,
+   "produccion_tn": 3829670,
+   "rendimiento_kg_ha": 1549,
+   "variacion_pct": -46.48
+  },
+  {
+   "campania": "2023/2024",
+   "sup_sembrada_ha": 3060735,
+   "sup_cosechada_ha": 3045335,
+   "produccion_tn": 10796728,
+   "rendimiento_kg_ha": 3545,
+   "variacion_pct": 128.86
+  },
+  {
+   "campania": "2024/2025",
+   "sup_sembrada_ha": 3389223,
+   "sup_cosechada_ha": 3362223,
+   "produccion_tn": 11463852,
+   "rendimiento_kg_ha": 3410,
+   "variacion_pct": -3.81
+  }
+ ],
+ "promedio_rendimiento_kg_ha": 2917.5,
+ "fuente": "MAGyP — Sistema Integrado de Información Agropecuaria (SIIA)",
+ "fuente_url": "https://datos.magyp.gob.ar/dataset/estimaciones-agricolas",
+ "freshness": "current"
+}

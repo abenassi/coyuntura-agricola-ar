@@ -9,13 +9,12 @@
 
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
-import { feature } from "topojson-client";
-import type { GeometryCollection, Topology } from "topojson-specification";
 import * as analytics from "../../analytics";
 import { quantiles } from "../../datos/calculos";
 import type { Consultas } from "../../datos/consultas";
 import { cultivo, type FilaEstimacion } from "../../datos/tipos";
 import { cruzar, indexarGeometria, type FeatureDepto } from "../../geo/cruce";
+import { cargarGeometria } from "../../geo/geometria";
 import { h, selector } from "../dom";
 import { campaniaCorta, hectareas, kgHa, numero, toneladas } from "../formato";
 import type { Filtros, MetricaMapa } from "../filtros";
@@ -23,25 +22,14 @@ import { notaFuente } from "./comun";
 
 const CLASES = 5;
 
-let geometria: Promise<FeatureDepto[]> | null = null;
 let mapa: L.Map | null = null;
 
-/** Los polígonos se bajan una sola vez, recién cuando alguien abre el mapa. */
-function cargarGeometria(): Promise<FeatureDepto[]> {
-  geometria ??= fetch(`${import.meta.env.BASE_URL}geo/departamentos.topo.json`)
-    .then((r) => {
-      if (!r.ok) throw new Error(`No se pudo bajar la geometría (HTTP ${r.status})`);
-      return r.json() as Promise<Topology>;
-    })
-    .then((topo) => feature(topo, topo.objects.departamentos as GeometryCollection).features as FeatureDepto[])
-    .catch((e: unknown) => {
-      geometria = null;
-      throw e;
-    });
-  return geometria;
-}
-
-export function seccionMapa(q: Consultas, filtros: () => Filtros, cambiar: (p: Partial<Filtros>) => void) {
+export function seccionMapa(
+  q: Consultas,
+  filtros: () => Filtros,
+  cambiar: (p: Partial<Filtros>) => void,
+  analizarDepartamento: (codigo: string) => void,
+) {
   return {
     clave: () => `${filtros().cultivo} ${filtros().campania} ${filtros().metricaMapa}`,
     controles: () =>
@@ -97,7 +85,7 @@ export function seccionMapa(q: Consultas, filtros: () => Filtros, cambiar: (p: P
 
       // Leaflet necesita que el contenedor ya esté en el documento para medirlo.
       requestAnimationFrame(() => {
-        if (vigente()) dibujar(contenedor, features, cruzadas, cortes, metricaMapa);
+        if (vigente()) dibujar(contenedor, features, cruzadas, cortes, metricaMapa, analizarDepartamento);
       });
     },
   };
@@ -134,7 +122,7 @@ function leyenda(cortes: number[], metrica: MetricaMapa): HTMLElement {
   return h("ul", { class: "leyenda" }, items);
 }
 
-function detalle(fila: FilaEstimacion): HTMLElement {
+function detalle(fila: FilaEstimacion, codigo: string, analizar: (codigo: string) => void): HTMLElement {
   return h(
     "div",
     { class: "popup" },
@@ -142,6 +130,7 @@ function detalle(fila: FilaEstimacion): HTMLElement {
     h("p", {}, `Producción: ${toneladas(fila.produccion_tn)}`),
     h("p", {}, `Sembrado: ${hectareas(fila.sup_sembrada_ha)} · cosechado: ${hectareas(fila.sup_cosechada_ha)}`),
     h("p", {}, `Rendimiento: ${kgHa(fila.rendimiento_kg_ha)}`),
+    h("button", { type: "button", class: "analizar", onclick: () => analizar(codigo) }, "Ver su evolución →"),
   );
 }
 
@@ -151,6 +140,7 @@ function dibujar(
   cruzadas: { fila: FilaEstimacion; feature: FeatureDepto }[],
   cortes: number[],
   metrica: MetricaMapa,
+  analizar: (codigo: string) => void,
 ) {
   mapa?.remove();
   // En pantallas táctiles el arrastre con un dedo se lo deja a la página (si no, el mapa atrapa el
@@ -182,7 +172,7 @@ function dibujar(
         }
         // Siempre un nodo y no un string: Leaflet mete los strings con innerHTML, y los nombres vienen de afuera.
         capaDepto.bindTooltip(() => h("span", {}, `${fila.departamento}: ${formatoMetrica(valorDe(fila, metrica), metrica)}`), { sticky: true });
-        capaDepto.bindPopup(() => detalle(fila));
+        capaDepto.bindPopup(() => detalle(fila, (f as FeatureDepto).properties.id, analizar));
         capaDepto.on("click", () => analytics.mapaDepartamentoClick(fila.provincia, fila.departamento));
       },
     },

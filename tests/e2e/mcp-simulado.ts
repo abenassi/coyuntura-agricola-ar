@@ -12,8 +12,13 @@ const RESPUESTAS: Record<string, (args: Record<string, unknown>) => unknown> = {
   siia_cultivos_disponibles: () => fixture("cultivos-disponibles"),
   siia_balance_campania: (a) => fixture(a.campania === "2023/2024" ? "balance-2023-2024" : "balance-2024-2025"),
   siia_ranking_provincias: () => fixture("ranking-soja-produccion-2024-2025"),
-  siia_evolucion_rendimiento: () => fixture("evolucion-soja-pais"),
-  siia_estimaciones_cultivo: () => fixture("estimaciones-soja-2024-2025"),
+  siia_evolucion_rendimiento: (a) => fixture(a.campanias === 30 ? "evolucion-soja-santa-fe-30" : "evolucion-soja-pais"),
+  siia_estimaciones_cultivo: (a) =>
+    a.departamento === "General López"
+      ? fixture("estimaciones-soja-general-lopez")
+      : a.departamento === "Caseros"
+        ? fixture("estimaciones-soja-caseros")
+        : fixture("estimaciones-soja-2024-2025"),
   consultar_cuota: () => fixture("cuota-free"),
 };
 
@@ -23,6 +28,8 @@ export function sse(resultado: unknown) {
 
 export interface Simulacion {
   llamadas: string[];
+  /** Cada llamada con sus argumentos, para contar consultas de una sección. */
+  detalle?: { tool: string; args: Record<string, unknown> }[];
   agotarEn?: string;
   /** Milisegundos de demora por consulta, para provocar respuestas fuera de orden. */
   demora?: (tool: string, args: Record<string, unknown>) => number;
@@ -35,6 +42,7 @@ export async function simularMcp(page: Page, sim: Simulacion) {
     const cuerpo = route.request().postDataJSON() as { params: { name: string; arguments: Record<string, unknown> } };
     const tool = cuerpo.params.name;
     sim.llamadas.push(tool);
+    sim.detalle?.push({ tool, args: cuerpo.params.arguments });
     const ms = sim.demora?.(tool, cuerpo.params.arguments) ?? 0;
     if (ms) await new Promise((listo) => setTimeout(listo, ms));
     const headers = { "access-control-allow-origin": "*", "content-type": "text/event-stream" };

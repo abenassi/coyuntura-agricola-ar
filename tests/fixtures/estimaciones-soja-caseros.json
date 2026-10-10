@@ -1,0 +1,241 @@
+{
+ "cultivo": "soja total",
+ "filtros": {
+  "campania": "todas",
+  "provincia": "Santa Fe",
+  "departamento": "Caseros"
+ },
+ "datos": [
+  {
+   "campania": "2024/2025",
+   "provincia": "Santa Fe",
+   "departamento": "Caseros",
+   "sup_sembrada_ha": 227000,
+   "sup_cosechada_ha": 227000,
+   "produccion_tn": 854250,
+   "rendimiento_kg_ha": 3763
+  },
+  {
+   "campania": "2023/2024",
+   "provincia": "Santa Fe",
+   "departamento": "Caseros",
+   "sup_sembrada_ha": 214000,
+   "sup_cosechada_ha": 214000,
+   "produccion_tn": 818350,
+   "rendimiento_kg_ha": 3824
+  },
+  {
+   "campania": "2022/2023",
+   "provincia": "Santa Fe",
+   "departamento": "Caseros",
+   "sup_sembrada_ha": 195000,
+   "sup_cosechada_ha": 165000,
+   "produccion_tn": 243700,
+   "rendimiento_kg_ha": 1477
+  },
+  {
+   "campania": "2021/2022",
+   "provincia": "Santa Fe",
+   "departamento": "Caseros",
+   "sup_sembrada_ha": 198200,
+   "sup_cosechada_ha": 198200,
+   "produccion_tn": 474120,
+   "rendimiento_kg_ha": 2392
+  },
+  {
+   "campania": "2020/2021",
+   "provincia": "Santa Fe",
+   "departamento": "Caseros",
+   "sup_sembrada_ha": 214600,
+   "sup_cosechada_ha": 214600,
+   "produccion_tn": 692680,
+   "rendimiento_kg_ha": 3228
+  },
+  {
+   "campania": "2019/2020",
+   "provincia": "Santa Fe",
+   "departamento": "Caseros",
+   "sup_sembrada_ha": 221800,
+   "sup_cosechada_ha": 221800,
+   "produccion_tn": 759772,
+   "rendimiento_kg_ha": 3425
+  },
+  {
+   "campania": "2018/2019",
+   "provincia": "Santa Fe",
+   "departamento": "Caseros",
+   "sup_sembrada_ha": 240200,
+   "sup_cosechada_ha": 240200,
+   "produccion_tn": 1021044,
+   "rendimiento_kg_ha": 4251
+  },
+  {
+   "campania": "2017/2018",
+   "provincia": "Santa Fe",
+   "departamento": "Caseros",
+   "sup_sembrada_ha": 224500,
+   "sup_cosechada_ha": 221700,
+   "produccion_tn": 678350,
+   "rendimiento_kg_ha": 3060
+  },
+  {
+   "campania": "2016/2017",
+   "provincia": "Santa Fe",
+   "departamento": "Caseros",
+   "sup_sembrada_ha": 247440,
+   "sup_cosechada_ha": 237340,
+   "produccion_tn": 881380,
+   "rendimiento_kg_ha": 3714
+  },
+  {
+   "campania": "2015/2016",
+   "provincia": "Santa Fe",
+   "departamento": "Caseros",
+   "sup_sembrada_ha": 261795,
+   "sup_cosechada_ha": 250295,
+   "produccion_tn": 840517,
+   "rendimiento_kg_ha": 3358
+  },
+  {
+   "campania": "2014/2015",
+   "provincia": "Santa Fe",
+   "departamento": "Caseros",
+   "sup_sembrada_ha": 250530,
+   "sup_cosechada_ha": 247830,
+   "produccion_tn": 1061941,
+   "rendimiento_kg_ha": 4285
+  },
+  {
+   "campania": "2013/2014",
+   "provincia": "Santa Fe",
+   "departamento": "Caseros",
+   "sup_sembrada_ha": 265000,
+   "sup_cosechada_ha": 260200,
+   "produccion_tn": 855860,
+   "rendimiento_kg_ha": 3289
+  },
+  {
+   "campania": "2012/2013",
+   "provincia": "Santa Fe",
+   "departamento": "Caseros",
+   "sup_sembrada_ha": 249800,
+   "sup_cosechada_ha": 249800,
+   "produccion_tn": 922480,
+   "rendimiento_kg_ha": 3693
+  },
+  {
+   "campania": "2011/2012",
+   "provincia": "Santa Fe",
+   "departamento": "Caseros",
+   "sup_sembrada_ha": 250900,
+   "sup_cosechada_ha": 250900,
+   "produccion_tn": 813250,
+   "rendimiento_kg_ha": 3241
+  },
+  {
+   "campania": "2010/2011",
+   "provincia": "Santa Fe",
+   "departamento": "Caseros",
+   "sup_sembrada_ha": 252900,
+   "sup_cosechada_ha": 252900,
+   "produccion_tn": 919440,
+   "rendimiento_kg_ha": 3636
+  },
+  {
+   "campania": "2009/2010",
+   "provincia": "Santa Fe",
+   "departamento": "Caseros",
+   "sup_sembrada_ha": 240700,
+   "sup_cosechada_ha": 239600,
+   "produccion_tn": 871700,
+   "rendimiento_kg_ha": 3638
+  },
+  {
+   "campania": "2008/2009",
+   "provincia": "Santa Fe",
+   "departamento": "Caseros",
+   "sup_sembrada_ha": 248999,
+   "sup_cosechada_ha": 246499,
+   "produccion_tn": 617341,
+   "rendimiento_kg_ha": 2504
+  },
+  {
+   "campania": "2007/2008",
+   "provincia": "Santa Fe",
+   "departamento": "Caseros",
+   "sup_sembrada_ha": 269200,
+   "sup_cosechada_ha": 269200,
+   "produccion_tn": 1005022,
+   "rendimiento_kg_ha": 3733
+  },
+  {
+   "campania": "2006/2007",
+   "provincia": "Santa Fe",
+   "departamento": "Caseros",
+   "sup_sembrada_ha": 284550,
+   "sup_cosechada_ha": 284550,
+   "produccion_tn": 996210,
+   "rendimiento_kg_ha": 3501
+  },
+  {
+   "campania": "2005/2006",
+   "provincia": "Santa Fe",
+   "departamento": "Caseros",
+   "sup_sembrada_ha": 282220,
+   "sup_cosechada_ha": 282220,
+   "produccion_tn": 896003,
+   "rendimiento_kg_ha": 3175
+  },
+  {
+   "campania": "2004/2005",
+   "provincia": "Santa Fe",
+   "departamento": "Caseros",
+   "sup_sembrada_ha": 278322,
+   "sup_cosechada_ha": 278322,
+   "produccion_tn": 955832,
+   "rendimiento_kg_ha": 3434
+  },
+  {
+   "campania": "2003/2004",
+   "provincia": "Santa Fe",
+   "departamento": "Caseros",
+   "sup_sembrada_ha": 280000,
+   "sup_cosechada_ha": 280000,
+   "produccion_tn": 762000,
+   "rendimiento_kg_ha": 2721
+  },
+  {
+   "campania": "2002/2003",
+   "provincia": "Santa Fe",
+   "departamento": "Caseros",
+   "sup_sembrada_ha": 275000,
+   "sup_cosechada_ha": 274000,
+   "produccion_tn": 872000,
+   "rendimiento_kg_ha": 3182
+  },
+  {
+   "campania": "2001/2002",
+   "provincia": "Santa Fe",
+   "departamento": "Caseros",
+   "sup_sembrada_ha": 274700,
+   "sup_cosechada_ha": 254700,
+   "produccion_tn": 704000,
+   "rendimiento_kg_ha": 2764
+  },
+  {
+   "campania": "2000/2001",
+   "provincia": "Santa Fe",
+   "departamento": "Caseros",
+   "sup_sembrada_ha": 283400,
+   "sup_cosechada_ha": 283400,
+   "produccion_tn": 813100,
+   "rendimiento_kg_ha": 2869
+  }
+ ],
+ "total": 25,
+ "devueltos": 25,
+ "_nota": "recortado a 25 campañas (la respuesta real trae 56)",
+ "fuente": "MAGyP — Sistema Integrado de Información Agropecuaria (SIIA)",
+ "fuente_url": "https://datos.magyp.gob.ar/dataset/estimaciones-agricolas",
+ "freshness": "current"
+}

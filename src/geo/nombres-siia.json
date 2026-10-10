@@ -1,0 +1,7 @@
+{
+  "_nota": "Código INDEC → nombre exacto con el que el SIIA publica ese departamento, cuando difiere del INDEC. siia_estimaciones_cultivo distingue tildes al filtrar por departamento. Medido el 2026-10-10 sobre los 315 departamentos con datos de soja y maíz 2024/25 (tests/departamentos.test.ts).",
+  "18035": "Curuzu Cuatia",
+  "34021": "Laishí",
+  "82028": "Villa Constitución",
+  "86098": "Juan F. Ibarra"
+}
