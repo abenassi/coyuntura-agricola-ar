@@ -72,6 +72,21 @@ informe usa 3 y cada sección que se abre, una más. El sitio no repite una cons
 misma visita y muestra cuántas quedan. El detalle está en [`src/mcp/oauth.ts`](src/mcp/oauth.ts) y en
 [docs/decisiones/0001](docs/decisiones/0001-acceso-oauth-en-vivo.md).
 
+### El otro modelo: que pague el autor
+
+Este informe es uno de los dos patrones de acceso que muestran los ejemplos de Argentina Data. El
+otro es la **[calculadora de inflación](https://github.com/abenassi/calculadora-inflacion-ar)**
+([inflacion.mymcps.dev](https://inflacion.mymcps.dev)): un GitHub Action baja los datos una vez por
+día con la key del autor, que sostiene todas las consultas, y el visitante no necesita cuenta.
+
+| | Calculadora de inflación | Coyuntura agrícola |
+|---|---|---|
+| Quién paga las consultas | El autor del sitio, con su key | Cada visitante, con su cuenta |
+| Cuándo se consulta el MCP | Una vez por día, en un GitHub Action | En vivo, en cada visita |
+| Secreto | La key, en GitHub Secrets | Ninguno |
+| El visitante necesita cuenta | No | Sí (se crea con Google en un clic) |
+| Sirve para | Datos que cambian poco y lectura sin fricción | Consultas que dependen de lo que elige cada uno |
+
 ## Correrlo en tu máquina
 
 ```bash
