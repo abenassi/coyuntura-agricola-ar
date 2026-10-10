@@ -10,4 +10,10 @@ Ejemplo público de una app sobre Argentina Data MCP. Leé primero el README y `
   No sumar otros terceros.
 - Un evento de analytics nuevo también va en `EVENTOS_PERMITIDOS["coyuntura-agricola"]` del MCP
   (`src/analytics/eventos-web.ts` en argentina-data-mcp), o se descarta en silencio.
-- Antes de commitear: `npm run verificar && npm run e2e`.
+- El filtro `departamento` de `siia_estimaciones_cultivo` es LIKE parcial y distingue tildes: mandá
+  el nombre exacto del SIIA (`nombreSiia`, `src/geo/nombres-siia.json`), filtrá por igualdad después
+  y pedí `limit: 500`, avisando si `devueltos < total`. "San Martín" también trae "General San Martín".
+- `Chart.register(...)` es global: un plugin registrado en una sección (p. ej. `Legend`) aparece en
+  todos los gráficos. Cada gráfico declara `plugins.legend` explícito.
+- Antes de commitear: `npm run verificar && npm run e2e`, y un code-reviewer sobre el diff sin
+  commitear. En "Tu departamento" encontró tres problemas reales que los tests no veían.
