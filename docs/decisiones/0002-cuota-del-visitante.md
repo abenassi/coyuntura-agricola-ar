@@ -14,7 +14,10 @@ es una decisión comercial que afecta a todos los usuarios.
 El sitio gasta lo mínimo:
 
 - **Cada sección carga recién cuando se abre.** Abrir el informe cuesta 3 consultas (campañas
-  disponibles y dos balances); ranking, evolución y mapa cuestan una cada una.
+  disponibles y dos balances); ranking, evolución y mapa cuestan una cada una. Desde el 2026-10-19
+  las secciones son pestañas y la regla es la misma: sólo consulta la que está a la vista. Las
+  flechas del teclado recorren las pestañas sin abrirlas (la activación es manual), y un link con
+  `?seccion=mapa` abre directo en esa pestaña sin pasar por el balance.
 - **No se repite una consulta dentro de una visita.** El cliente guarda en memoria la respuesta de
   cada combinación de tool y argumentos; volver a un cultivo ya visto no cuesta nada. No es un caché de
   datos: muere al recargar la página y nunca se guarda en el navegador.

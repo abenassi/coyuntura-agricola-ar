@@ -1,5 +1,5 @@
 /**
- * Genera las vistas previas de la pantalla de ingreso (public/previa/*.webp) a partir del informe
+ * Genera la vista previa de la pantalla de ingreso (public/previa/mapa.webp) a partir del informe
  * real, con el MCP simulado desde respuestas reales capturadas. No corre en CI: se usa a mano
  * cuando cambia algo visible del informe.
  *
@@ -35,29 +35,20 @@ function aWebp(png: string, webp: string) {
   console.log(webp, execFileSync("python", ["-c", py]).toString().trim());
 }
 
-test("vistas previas de la pantalla de ingreso", async ({ page }) => {
+test("vista previa de la pantalla de ingreso", async ({ page }) => {
   mkdirSync(DESTINO, { recursive: true });
   await simularMcp(page, { llamadas: [] });
   await conSesion(page);
   await page.emulateMedia({ colorScheme: "light" });
   await page.setViewportSize({ width: 1100, height: 900 });
-  await page.goto("./");
+  await page.goto("./?seccion=mapa");
 
-  await page.getByText("Mapa por departamento").click();
   await expect.poll(() => page.locator(".mapa path.leaflet-interactive").count()).toBeGreaterThan(500);
   await page.waitForTimeout(800);
   // Sin los botones de zoom ni la atribución: es una imagen, no un mapa.
   await page.addStyleTag({ content: ".leaflet-control-container{display:none}" });
   await page.locator("#mapa .mapa").screenshot({ path: `${DESTINO}/mapa.png` });
 
-  await page.getByText("Provincias líderes").click();
-  await expect(page.locator(".barras li").first()).toBeVisible();
-  await page.locator("#ranking .barras").screenshot({ path: `${DESTINO}/ranking.png` });
-
-  await page.locator("table.balance").screenshot({ path: `${DESTINO}/balance.png` });
-
-  for (const nombre of ["mapa", "ranking", "balance"]) {
-    aWebp(`${DESTINO}/${nombre}.png`, `${DESTINO}/${nombre}.webp`);
-    execFileSync("rm", [`${DESTINO}/${nombre}.png`]);
-  }
+  aWebp(`${DESTINO}/mapa.png`, `${DESTINO}/mapa.webp`);
+  execFileSync("rm", [`${DESTINO}/mapa.png`]);
 });

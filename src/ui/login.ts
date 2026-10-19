@@ -1,12 +1,16 @@
 /**
- * Pantalla para quien todavía no ingresó. Muestra qué hay del otro lado (vistas previas del
- * informe real, generadas con `npm run previas`) antes de pedirle que entre con su cuenta: nadie
- * hace clic en "Ingresar" sin saber a qué va.
+ * Pantalla para quien todavía no ingresó. Muestra qué hay del otro lado antes de pedirle que entre
+ * con su cuenta (nadie hace clic en "Ingresar" sin saber a qué va): tres cifras de la última
+ * campaña de las vistas previas, fijas porque todavía no hay cuota para consultar, y el mapa del
+ * informe real, generado con `npm run previas`.
  */
 
 import * as analytics from "../analytics";
 import { MCP_BASE, REF, URL_REPO } from "../config";
+import { CAMPANIA_PREVIA, CAMPANIA_PREVIA_VS, CIFRAS_PREVIA } from "./cifras-previa";
 import { h } from "./dom";
+import { compacto } from "./formato";
+import { variacion } from "./secciones/comun";
 
 const PREVIA = `${import.meta.env.BASE_URL}previa/`;
 
@@ -21,7 +25,7 @@ function boton(alIngresar: () => void, donde: string): HTMLButtonElement {
         alIngresar();
       },
     },
-    "Ver el informe completo",
+    "Ver el informe completo →",
   );
 }
 
@@ -54,36 +58,41 @@ export function pantallaIngreso(alIngresar: () => void, error?: string): HTMLEle
     h(
       "header",
       { class: "ingreso-cabecera" },
-      h("h1", {}, "Coyuntura agrícola"),
+      h("p", { class: "volanta" }, "Coyuntura agrícola"),
+      h("h1", {}, `Cómo terminó la campaña ${CAMPANIA_PREVIA}`),
       h(
         "p",
         { class: "bajada" },
-        "Cómo terminó la campaña de soja, maíz, trigo y girasol: producción y rinde por provincia y por departamento, ",
+        "Soja, maíz, trigo y girasol: producción y rinde por provincia y por departamento, ",
         "contra la campaña anterior y contra los últimos diez años.",
       ),
       error ? h("p", { class: "aviso error", role: "alert" }, error) : null,
-      boton(alIngresar, "arriba"),
-      h("p", { class: "nota" }, "Gratis, con tu cuenta de Google. Datos oficiales del Ministerio de Agricultura (MAGyP)."),
+      h(
+        "ul",
+        { class: "cifras-previa", "aria-label": `Producción de la campaña ${CAMPANIA_PREVIA} contra ${CAMPANIA_PREVIA_VS}` },
+        CIFRAS_PREVIA.map((c) =>
+          h("li", {}, h("span", { class: "cifra-etiqueta" }, c.etiqueta), h("strong", {}, compacto(c.produccion, "t")), variacion(c.variacion, ` contra ${CAMPANIA_PREVIA_VS}`)),
+        ),
+      ),
+      h(
+        "div",
+        { class: "ingreso-accion" },
+        boton(alIngresar, "arriba"),
+        h("p", { class: "nota" }, "Gratis, con tu cuenta de Google. Datos oficiales del Ministerio de Agricultura (MAGyP)."),
+      ),
     ),
-    h(
-      "div",
-      { class: "previas" },
-      previa("mapa", "Rinde de soja por departamento, campaña 2024/25", 849, 992, alIngresar, "principal"),
-      previa("ranking", "Provincias líderes en producción de soja", 1788, 818, alIngresar),
-      previa("balance", "Balance de la campaña contra la anterior", 1788, 1203, alIngresar),
-    ),
+    previa("mapa", `Rinde de soja por departamento, campaña ${CAMPANIA_PREVIA}`, 849, 992, alIngresar, "principal"),
     h(
       "div",
       { class: "ingreso-pie" },
-      boton(alIngresar, "abajo"),
       h(
         "p",
         { class: "nota" },
-        "Las imágenes son del informe con datos de la campaña 2024/25. Adentro elegís cultivo, campaña, provincia y métrica, ",
-        "y cada número se consulta en vivo a ",
+        `Adentro está el balance de los cuatro cultivos, las provincias líderes, la evolución del rinde, el mapa de cada departamento y la historia de tu departamento desde 1969. `,
+        "Elegís cultivo, campaña, provincia y métrica, y cada número se consulta en vivo a ",
         h("a", { href: `${MCP_BASE}/?ref=${REF}`, target: "_blank", rel: "noopener", onclick: () => analytics.clicMcp("home") }, "Argentina Data MCP"),
         ". Para eso entrás con una cuenta de Argentina Data, que se crea con Google en un clic. ",
-        "El plan gratuito trae 20 consultas por día; abrir el informe usa 3 y cada sección que abrís, una más.",
+        "El plan gratuito trae 20 consultas por día; abrir el informe usa 3 y cada sección que mirás, una más.",
       ),
       h(
         "p",

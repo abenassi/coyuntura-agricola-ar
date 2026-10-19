@@ -10,7 +10,7 @@
   --superficie: #fcfcfb;
   --texto: #0b0b0b;
   --texto-secundario: #52514e;
-  --texto-tenue: #898781;
+  --texto-tenue: #6f6d66;
   --grilla: #e1e0d9;
   --borde: rgba(11, 11, 11, 0.1);
   --serie-1: #2a78d6;
@@ -26,6 +26,14 @@
   --secuencial-3: #5598e7;
   --secuencial-4: #2a78d6;
   --secuencial-5: #184f95;
+  /* Variaciones: el color acompaña a la flecha y al signo, nunca va solo. */
+  --sube: #1d6b44;
+  --sube-fondo: #e2f1e8;
+  --baja: #a8302a;
+  --baja-fondo: #fbe8e6;
+  --igual-fondo: #ecebe6;
+  /* Fondo de las filas del cultivo elegido en el balance. */
+  --resalte: #eaf2fc;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -35,6 +43,7 @@
     --superficie: #1a1a19;
     --texto: #ffffff;
     --texto-secundario: #c3c2b7;
+    --texto-tenue: #a3a198;
     --grilla: #2c2c2a;
     --borde: rgba(255, 255, 255, 0.1);
     --serie-1: #3987e5;
@@ -48,11 +57,34 @@
     --secuencial-3: #3987e5;
     --secuencial-4: #6da7ec;
     --secuencial-5: #b7d3f6;
+    --sube: #7dd3a0;
+    --sube-fondo: #15301f;
+    --baja: #ff9a90;
+    --baja-fondo: #3a1a17;
+    --igual-fondo: #2c2c2a;
+    --resalte: #18273a;
   }
 }
 
 * {
   box-sizing: border-box;
+}
+
+/* Que ningún `display` de una clase le gane a `hidden` (pestañas, filas plegadas del ranking). */
+[hidden] {
+  display: none !important;
+}
+
+.solo-lector {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  border: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
 }
 
 body {
@@ -73,15 +105,21 @@ a {
 }
 
 h1 {
-  font-size: 1.5rem;
+  font-size: 1.75rem;
   margin: 0;
-  line-height: 1.2;
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+}
+
+.titulo-campania {
+  color: var(--texto-secundario);
+  font-weight: 500;
 }
 
 h2 {
-  font-size: 1.15rem;
-  margin: 0;
-  display: inline;
+  font-size: 1.25rem;
+  margin: 0 0 12px;
+  line-height: 1.25;
 }
 
 button,
@@ -116,6 +154,7 @@ select {
   border: 1px solid var(--borde);
   border-radius: 8px;
   padding: 6px 8px;
+  font-size: 0.95rem;
 }
 
 .num {
@@ -155,26 +194,75 @@ select {
 /* ---------------------------------------------------------------- ingreso */
 
 .ingreso {
-  max-width: 900px;
+  max-width: 960px;
   margin: 4vh auto 0;
   display: grid;
-  gap: 20px;
+  gap: 24px;
 }
 
 .ingreso-cabecera,
-.ingreso-pie {
+.ingreso-pie,
+.ingreso-accion {
   display: grid;
   gap: 12px;
   justify-items: start;
 }
 
+.ingreso .volanta {
+  margin: 0;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--enlace);
+}
+
+.ingreso h1 {
+  font-size: 2.1rem;
+}
+
 .ingreso .bajada {
   font-size: 1.15rem;
   margin: 0;
+  color: var(--texto-secundario);
+  max-width: 42em;
 }
 
 .ingreso .nota {
   margin: 0;
+}
+
+.cifras-previa {
+  list-style: none;
+  padding: 0;
+  margin: 4px 0;
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.cifras-previa li {
+  display: grid;
+  gap: 4px;
+  justify-items: start;
+  align-content: start;
+  background: var(--superficie);
+  border: 1px solid var(--borde);
+  border-radius: 12px;
+  padding: 12px 14px;
+}
+
+.cifra-etiqueta {
+  font-size: 0.875rem;
+  color: var(--texto-secundario);
+}
+
+.cifras-previa strong {
+  font-size: 1.6rem;
+  line-height: 1.15;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.01em;
 }
 
 .previa {
@@ -202,6 +290,8 @@ select {
   display: block;
   width: 100%;
   height: auto;
+  max-height: 620px;
+  object-fit: contain;
 }
 
 .previa figcaption {
@@ -210,24 +300,49 @@ select {
   margin-top: 6px;
 }
 
-/* Escritorio: el mapa a la izquierda y las otras dos apiladas a la derecha. Celular: una columna. */
-.previas {
-  display: grid;
-  grid-template-columns: 1fr 1.25fr;
-  gap: 16px;
-  align-items: start;
-}
-
-.previa.principal {
-  grid-row: span 2;
-}
-
-@media (max-width: 720px) {
-  .previas {
+/* Celular: las cifras en una columna y el botón fijo abajo, siempre a mano. */
+@media (max-width: 560px) {
+  .ingreso {
+    margin-top: 8px;
+    padding-bottom: 120px;
+  }
+  .ingreso h1 {
+    font-size: 1.6rem;
+  }
+  .ingreso .bajada {
+    font-size: 1.05rem;
+  }
+  .cifras-previa {
     grid-template-columns: 1fr;
   }
-  .previa.principal {
-    grid-row: auto;
+  .cifras-previa li {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 2px 10px;
+  }
+  .cifra-etiqueta {
+    flex-basis: 100%;
+  }
+  .cifras-previa strong {
+    font-size: 1.35rem;
+  }
+  .ingreso-accion {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 1200;
+    gap: 6px;
+    justify-items: stretch;
+    padding: 10px 16px calc(10px + env(safe-area-inset-bottom));
+    background: var(--plano);
+    border-top: 1px solid var(--borde);
+    box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.08);
+  }
+  .ingreso-accion .nota {
+    font-size: 0.8rem;
+    text-align: center;
   }
 }
 
@@ -236,21 +351,31 @@ select {
 .cabecera {
   display: grid;
   gap: 12px;
-  margin-bottom: 16px;
+  margin-bottom: 4px;
 }
 
-.barra-superior {
+.cabecera .nota {
+  margin: 0;
+}
+
+.barra-superior,
+.fila-controles {
   display: flex;
-  flex-wrap: wrap;
   justify-content: space-between;
   align-items: center;
-  gap: 8px;
+  gap: 8px 16px;
 }
 
-.sesion {
-  display: flex;
-  align-items: center;
-  gap: 12px;
+.fila-controles {
+  flex-wrap: wrap;
+  align-items: end;
+}
+
+.barra-superior .secundario {
+  flex: none;
+}
+
+.cuota {
   font-size: 0.875rem;
   color: var(--texto-secundario);
 }
@@ -279,10 +404,77 @@ select {
   color: var(--texto-secundario);
 }
 
+/*
+ * La barra que queda pegada arriba al bajar: cultivo y pestañas, para que siempre se sepa qué se
+ * está mirando. Las campañas quedan en la cabecera (cada sección igual las dice en su resumen):
+ * en el celular, con ellas la barra ocuparía un quinto de la pantalla.
+ */
+.barra-fija {
+  position: sticky;
+  top: 0;
+  z-index: 1100; /* por encima de los controles de Leaflet (1000) */
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 16px;
+  margin: 0 -16px 16px;
+  padding: 10px 16px 0;
+  background: var(--plano);
+  border-bottom: 1px solid var(--borde);
+}
+
 .cultivos {
   display: flex;
   gap: 4px;
   flex-wrap: wrap;
+  padding-bottom: 10px;
+}
+
+.pestanias {
+  display: flex;
+  gap: 2px;
+  margin-left: auto;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.pestanias.hay-mas {
+  mask-image: linear-gradient(to right, #000 80%, transparent);
+}
+
+.pestanias [role="tab"] {
+  border: 0;
+  border-bottom: 3px solid transparent;
+  border-radius: 0;
+  background: transparent;
+  padding: 8px 10px 9px;
+  white-space: nowrap;
+  color: var(--texto-secundario);
+  font-weight: 500;
+}
+
+.pestanias [role="tab"]:hover {
+  color: var(--texto);
+}
+
+.pestanias [role="tab"][aria-selected="true"] {
+  color: var(--texto);
+  font-weight: 600;
+  border-bottom-color: var(--serie-1);
+}
+
+@media (max-width: 720px) {
+  .cultivos {
+    width: 100%;
+    padding-bottom: 0;
+  }
+  .cultivos button {
+    flex: 1;
+  }
+  .pestanias {
+    margin-left: 0;
+    width: 100%;
+  }
 }
 
 .cultivos button[aria-pressed="true"] {
@@ -299,19 +491,75 @@ select {
   border: 1px solid var(--borde);
   border-radius: 12px;
   margin-bottom: 12px;
+  padding: 20px;
 }
 
-.seccion > summary {
-  cursor: pointer;
-  padding: 14px 16px;
-}
-
-.seccion > .cuerpo {
-  padding: 0 16px 16px;
+.seccion:focus {
+  outline: none;
 }
 
 .resumen {
   margin-top: 0;
+}
+
+/* El número que importa de cada sección, grande, antes de la frase que lo explica. */
+.titular {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 12px;
+  margin-bottom: 6px;
+}
+
+.titular-cifra {
+  font-size: 1.9rem;
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: -0.01em;
+  font-variant-numeric: tabular-nums;
+}
+
+.titular .delta {
+  font-size: 0.95rem;
+}
+
+.titular-contexto {
+  color: var(--texto-secundario);
+  font-size: 0.9rem;
+}
+
+.delta {
+  display: inline-block;
+  padding: 1px 6px;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 0.875em;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.delta.sube {
+  color: var(--sube);
+  background: var(--sube-fondo);
+}
+
+.delta.baja {
+  color: var(--baja);
+  background: var(--baja-fondo);
+}
+
+.delta.igual {
+  color: var(--texto-secundario);
+  background: var(--igual-fondo);
+}
+
+@media (max-width: 560px) {
+  .seccion {
+    padding: 16px 14px;
+  }
+  .titular-cifra {
+    font-size: 1.6rem;
+  }
 }
 
 .tabla-scroll {
@@ -346,13 +594,28 @@ table.balance th[scope="row"] {
   color: var(--texto-secundario);
 }
 
+table.balance tr.elegido > * {
+  background: var(--resalte);
+}
+
+table.balance tr.grupo.elegido > th {
+  box-shadow: inset 3px 0 0 var(--serie-1);
+}
+
 .compacto {
   display: none;
 }
 
 @media (max-width: 560px) {
+  /* Se ve el compacto (aria-hidden) y el lector de pantalla sigue leyendo el número completo. */
   .completo {
-    display: none;
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
   }
   .compacto {
     display: inline;
@@ -364,13 +627,12 @@ table.balance th[scope="row"] {
   table.balance td {
     padding: 5px 3px;
   }
+  table.balance .delta {
+    padding: 1px 3px;
+  }
 }
 
-.variacion {
-  font-weight: 600;
-}
-
-/* Ranking: cada fila es barra y tabla a la vez. */
+/* Ranking: cada fila es barra y tabla a la vez. El número va pegado al final de su barra. */
 .barras {
   list-style: none;
   padding: 0;
@@ -381,47 +643,65 @@ table.balance th[scope="row"] {
 
 .barra {
   display: grid;
-  grid-template-columns: minmax(9rem, 12rem) 1fr minmax(7rem, auto);
+  grid-template-columns: minmax(9rem, 12rem) 1fr;
   gap: 8px;
   align-items: center;
   font-size: 0.9rem;
 }
 
+/* El margen derecho es el lugar del número de la barra más larga. */
 .barra-pista {
   position: relative;
-  height: 14px;
+  height: 1.5rem;
+  margin-right: 11rem;
 }
 
 .barra-relleno {
-  display: block;
-  height: 100%;
+  position: absolute;
+  left: 0;
+  top: 0.3rem;
+  bottom: 0.3rem;
   background: var(--serie-1);
   border-radius: 0 4px 4px 0;
 }
 
 .barra-referencia {
   position: absolute;
-  top: -3px;
-  bottom: -3px;
+  top: 0;
+  bottom: 0;
   border-left: 1px dashed var(--texto-secundario);
 }
 
 .barra-valor {
+  position: absolute;
+  top: 0;
+  line-height: 1.5rem;
+  padding-left: 6px;
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
 }
 
 .barra-valor small {
   color: var(--texto-secundario);
+  font-size: 0.85em;
+}
+
+.ver-mas {
+  margin-top: 10px;
+  padding: 8px 0;
+  border: 0;
+  background: none;
+  color: var(--enlace);
+  font-weight: 600;
 }
 
 @media (max-width: 560px) {
   .barra {
-    grid-template-columns: 1fr auto;
+    grid-template-columns: 1fr;
+    gap: 0;
   }
   .barra-pista {
-    grid-column: 1 / -1;
-    grid-row: 2;
+    margin-right: 8.5rem;
   }
 }
 
@@ -435,7 +715,14 @@ table.balance th[scope="row"] {
   font-size: 0.9rem;
 }
 
-/* Mapa */
+/* Mapa, con el panel al costado (abajo en el celular). */
+.mapa-y-panel {
+  display: grid;
+  grid-template-columns: minmax(0, 1.7fr) minmax(220px, 1fr);
+  gap: 16px;
+  align-items: start;
+}
+
 .mapa {
   height: 520px;
   border-radius: 8px;
@@ -447,17 +734,145 @@ table.balance th[scope="row"] {
   font: inherit;
 }
 
-.leyenda {
+/* Con la especificidad de la hoja de Leaflet, que se carga después. */
+.mapa.leaflet-container .leaflet-control-attribution {
+  font-size: 0.7rem;
+  color: var(--texto-secundario);
+  background: color-mix(in srgb, var(--superficie) 85%, transparent);
+}
+
+.panel-mapa {
+  display: grid;
+  gap: 8px;
+}
+
+.panel-mapa h3 {
+  font-size: 0.95rem;
+  margin: 8px 0 0;
+}
+
+.panel-detalle {
+  border: 1px solid var(--borde);
+  border-radius: 10px;
+  padding: 12px;
+  background: var(--plano);
+}
+
+.panel-detalle.con-depto {
+  border-color: var(--serie-1);
+}
+
+.panel-detalle p {
+  margin: 2px 0;
+  font-size: 0.9rem;
+}
+
+.panel-etiqueta {
+  display: block;
+  font-size: 0.75rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--texto-tenue);
+}
+
+.mejores {
   list-style: none;
   padding: 0;
+  margin: 0;
+  counter-reset: mejores;
+}
+
+.mejores li {
+  counter-increment: mejores;
+}
+
+.mejor {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  width: 100%;
+  padding: 8px 2px;
+  border: 0;
+  border-top: 1px solid var(--grilla);
+  border-radius: 0;
+  background: none;
+  text-align: left;
+  font-size: 0.9rem;
+}
+
+button.mejor:hover {
+  background: var(--resalte);
+}
+
+.mejor::before {
+  content: counter(mejores) ".";
+  color: var(--texto-tenue);
+  min-width: 1.2em;
+}
+
+.mejor span {
+  flex: 1;
+}
+
+.mejor strong {
+  font-variant-numeric: tabular-nums;
+}
+
+@media (max-width: 760px) {
+  .mapa-y-panel {
+    grid-template-columns: 1fr;
+  }
+  .mapa {
+    height: 420px;
+  }
+}
+
+/* Leyenda en rampa: los colores en fila y los cortes en las uniones. */
+.leyenda {
   display: flex;
   flex-wrap: wrap;
-  gap: 4px 16px;
-  font-size: 0.85rem;
+  align-items: flex-start;
+  gap: 8px 20px;
+  margin-top: 10px;
+  font-size: 0.8rem;
   color: var(--texto-secundario);
 }
 
-.leyenda li {
+.leyenda-rampa {
+  flex: 1 1 240px;
+  max-width: 420px;
+}
+
+.rampa {
+  display: flex;
+  height: 10px;
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.rampa span {
+  flex: 1;
+}
+
+.rampa-cortes {
+  position: relative;
+  height: 1.4em;
+  margin-top: 3px;
+}
+
+.rampa-cortes span {
+  position: absolute;
+  transform: translateX(-50%);
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+.rampa-cortes .rampa-unidad {
+  right: 0;
+  transform: none;
+}
+
+.leyenda-vacia {
   display: flex;
   align-items: center;
   gap: 6px;
@@ -477,10 +892,6 @@ table.balance th[scope="row"] {
 .muestra-4 { background: var(--secuencial-4); }
 .muestra-5 { background: var(--secuencial-5); }
 .muestra-vacia { background: var(--sin-dato); }
-
-.popup p {
-  margin: 2px 0;
-}
 
 .pie {
   color: var(--texto-secundario);
@@ -580,7 +991,31 @@ table.balance th[scope="row"] {
   height: 340px;
 }
 
-.popup .analizar {
-  margin-top: 6px;
-  font-size: 0.85rem;
+.panel-detalle .analizar {
+  margin-top: 8px;
+  font-size: 0.9rem;
+}
+
+/* Celular: letra de 16 px en los controles (si no, iOS hace zoom al tocar un select) y 44 px de alto
+   para el dedo. */
+@media (max-width: 560px) {
+  h1 {
+    font-size: 1.4rem;
+  }
+  /* La campaña ya está en el selector de abajo: el título entra en una línea. */
+  .titulo-campania {
+    display: none;
+  }
+  .cabecera .nota {
+    font-size: 0.8rem;
+  }
+  button,
+  select,
+  .buscador-campo input {
+    font-size: 16px;
+    min-height: 44px;
+  }
+  .pestanias [role="tab"] {
+    font-size: 15px;
+  }
 }

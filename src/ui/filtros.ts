@@ -38,6 +38,9 @@ export const METRICAS_RANKING = ["produccion", "sup_sembrada", "rendimiento"] as
 export const METRICAS_MAPA = ["rendimiento", "produccion"] as const;
 export const VARIABLES_DEPTO = ["rendimiento", "produccion", "sup_sembrada", "sup_cosechada"] as const;
 export const RANGOS_DEPTO = ["20", "10", "todo"] as const;
+/** Las pestañas del informe, en orden. La primera es la que se ve al entrar. */
+export const SECCIONES = ["balance", "ranking", "evolucion", "mapa", "departamento"] as const;
+export type SeccionId = (typeof SECCIONES)[number];
 export type MetricaMapa = (typeof METRICAS_MAPA)[number];
 
 export interface Filtros {
@@ -55,6 +58,8 @@ export interface Filtros {
   vsDepto: string | null;
   variableDepto: VariableDepto;
   rangoDepto: RangoDepto;
+  /** La pestaña a la vista: sólo esa consulta al MCP. */
+  seccion: SeccionId;
 }
 
 const CODIGO_DEPTO = /^[0-9]{5}$/;
@@ -93,6 +98,7 @@ export function leerFiltros(search: string, campanias: string[]): Filtros {
     ...deptos(p.get("depto"), p.get("vs_depto")),
     variableDepto: elegir(p.get("variable"), VARIABLES_DEPTO, "rendimiento"),
     rangoDepto: elegir(p.get("rango"), RANGOS_DEPTO, "20"),
+    seccion: elegir(p.get("seccion"), SECCIONES, "balance"),
   };
 }
 
@@ -117,6 +123,7 @@ export function escribirFiltros(f: Filtros, campanias: string[]): string {
   if (f.depto && f.vsDepto) p.set("vs_depto", f.vsDepto);
   if (f.variableDepto !== defecto.variableDepto) p.set("variable", f.variableDepto);
   if (f.rangoDepto !== defecto.rangoDepto) p.set("rango", f.rangoDepto);
+  if (f.seccion !== defecto.seccion) p.set("seccion", f.seccion);
   const texto = p.toString();
   return texto ? `?${texto}` : "";
 }

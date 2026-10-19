@@ -7,7 +7,7 @@ con otro departamento y con su provincia.
 
 **En vivo: [agro.mymcps.dev](https://agro.mymcps.dev)**
 
-![El informe: balance de la campaña y ranking de provincias](docs/captura.png)
+![El informe: mapa por departamento con el detalle del departamento elegido y los cinco de mayor rinde](docs/captura.png)
 
 Es también un **ejemplo de cómo construir una aplicación sobre [Argentina Data MCP](https://argentinadata.mymcps.dev/?ref=coyuntura-agricola)**,
 un servidor MCP con datos públicos argentinos. Esta app no tiene backend propio ni guarda datos: cada
@@ -84,7 +84,7 @@ Por eso **se autentica el visitante, no el sitio**. El botón "Ver el informe co
 4. El token queda en `sessionStorage` y se borra al cerrar la pestaña.
 
 Cada consulta sale de la cuota del visitante. El plan gratuito trae 20 consultas por día: abrir el
-informe usa 3 y cada sección que se abre, una más. El sitio no repite una consulta que ya hizo en la
+informe usa 3 y cada pestaña que se mira, una más. El sitio no repite una consulta que ya hizo en la
 misma visita y muestra cuántas quedan. El detalle está en [`src/mcp/oauth.ts`](src/mcp/oauth.ts) y en
 [docs/decisiones/0001](docs/decisiones/0001-acceso-oauth-en-vivo.md).
 
@@ -147,7 +147,7 @@ src/
   datos/consultas.ts     una función por tool del MCP
   datos/calculos.ts      variaciones, campañas, cortes del mapa (funciones puras)
   geo/cruce.ts           cruce de los departamentos del SIIA con los polígonos del INDEC
-  ui/secciones/          balance, ranking, evolución y mapa; cada una carga cuando se abre
+  ui/secciones/          balance, ranking, evolución, mapa y departamento; cada pestaña carga cuando se mira
   analytics.ts           métricas de uso
 public/geo/              polígonos de departamentos (INDEC), simplificados
 scripts/                 registrar el cliente OAuth, preparar la geometría

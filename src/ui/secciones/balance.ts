@@ -13,7 +13,7 @@ import { cultivo } from "../../datos/tipos";
 import { h } from "../dom";
 import { campaniaCorta, compacto, hectareas, kgHa, numero, pct, toneladas } from "../formato";
 import type { Filtros } from "../filtros";
-import { notaFuente } from "./comun";
+import { notaFuente, titular, variacion } from "./comun";
 
 export function seccionBalance(q: Consultas, filtros: () => Filtros) {
   return {
@@ -37,11 +37,16 @@ function resumen(filas: FilaComparada[], campania: string, vs: string): HTMLElem
   const v = variacionPct(ta, tb);
   if (ta == null || v == null) return h("p");
   return h(
-    "p",
-    { class: "resumen" },
-    `En ${campaniaCorta(campania)} los cuatro cultivos sumaron `,
-    h("strong", {}, toneladas(ta)),
-    `, ${pct(v)} contra ${campaniaCorta(vs)}.`,
+    "div",
+    {},
+    titular(compacto(ta, "t"), variacion(v), `soja, maíz, trigo y girasol contra ${campaniaCorta(vs)}`),
+    h(
+      "p",
+      { class: "resumen" },
+      `En ${campaniaCorta(campania)} los cuatro cultivos sumaron `,
+      h("strong", {}, toneladas(ta)),
+      `, ${pct(v)} contra ${campaniaCorta(vs)}.`,
+    ),
   );
 }
 
@@ -69,17 +74,17 @@ function tabla(filas: FilaComparada[], campania: string, vs: string): HTMLElemen
     return [
       h(
         "tr",
-        { class: "grupo" },
+        { class: "grupo", "data-cultivo": f.cultivo },
         h("th", { scope: "rowgroup", colspan: 4 }, cultivo(f.cultivo).nombre, h("span", { class: "compacto unidad-rinde" }, " · rinde en kg/ha")),
       ),
-      ...metricas.map(([nombre, corto, va, vb, variacion]) =>
+      ...metricas.map(([nombre, corto, va, vb, cambio]) =>
         h(
           "tr",
-          {},
+          { "data-cultivo": f.cultivo },
           h("th", { scope: "row" }, cifra(nombre, corto)),
           h("td", { class: "num" }, [...va]),
           h("td", { class: "num" }, [...vb]),
-          h("td", { class: "num variacion" }, pct(variacion)),
+          h("td", { class: "num" }, variacion(cambio)),
         ),
       ),
     ];

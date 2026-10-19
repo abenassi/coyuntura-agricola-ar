@@ -16,12 +16,13 @@ describe("leerFiltros", () => {
       vsDepto: null,
       variableDepto: "rendimiento",
       rangoDepto: "20",
+      seccion: "balance",
     });
   });
 
   test("respeta parámetros válidos", () => {
     const f = leerFiltros(
-      "?cultivo=girasol&campania=2023/2024&vs=2022/2023&provincia=La%20Pampa&ranking=rendimiento&mapa=produccion",
+      "?cultivo=girasol&campania=2023/2024&vs=2022/2023&provincia=La%20Pampa&ranking=rendimiento&mapa=produccion&seccion=mapa",
       CAMPANIAS,
     );
     expect(f).toEqual({
@@ -35,11 +36,12 @@ describe("leerFiltros", () => {
       vsDepto: null,
       variableDepto: "rendimiento",
       rangoDepto: "20",
+      seccion: "mapa",
     });
   });
 
   test("cualquier valor inválido cae a su default, sin arrastrar basura a las consultas", () => {
-    const f = leerFiltros("?cultivo=papa&campania=xx&vs=1900/1901&provincia=Narnia&ranking=bananas&mapa=1", CAMPANIAS);
+    const f = leerFiltros("?cultivo=papa&campania=xx&vs=1900/1901&provincia=Narnia&ranking=bananas&mapa=1&seccion=admin", CAMPANIAS);
     expect(f).toEqual(leerFiltros("", CAMPANIAS));
   });
 
@@ -71,6 +73,7 @@ describe("escribirFiltros", () => {
       vsDepto: null,
       variableDepto: "rendimiento",
       rangoDepto: "20",
+      seccion: "evolucion",
     };
     expect(leerFiltros(escribirFiltros(f, CAMPANIAS), CAMPANIAS)).toEqual(f);
   });

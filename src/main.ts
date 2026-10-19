@@ -3,8 +3,8 @@
  *
  * 1. Si la URL es la vuelta del login, canjea el code por el token.
  * 2. Sin token: pantalla de ingreso.
- * 3. Con token: pide las campañas disponibles, arma los filtros y monta las cuatro secciones.
- *    Cada sección consulta al MCP recién cuando se abre.
+ * 3. Con token: pide las campañas disponibles, arma los filtros y monta las secciones como
+ *    pestañas. Cada sección consulta al MCP recién cuando se muestra.
  */
 
 import "./estilos.css";
@@ -18,7 +18,7 @@ import { cerrarSesion, completarLogin, iniciarLogin, token } from "./mcp/oauth";
 import { actualizarCuota } from "./ui/cuota";
 import { h, selector } from "./ui/dom";
 import { campaniaCorta } from "./ui/formato";
-import { escribirFiltros, leerFiltros, type Filtros } from "./ui/filtros";
+import { escribirFiltros, leerFiltros, type Filtros, type SeccionId } from "./ui/filtros";
 import { pantallaIngreso } from "./ui/login";
 import { mensajeDeError, montarSeccion, type Seccion } from "./ui/seccion";
 import { guardarVista, recuperarVista } from "./ui/vista";
@@ -79,21 +79,26 @@ async function informe(q: Consultas) {
 
   const cuota = h("span", { class: "cuota", "aria-live": "polite" });
   const controles = h("div", { class: "controles" });
+  const cultivos = h("div", { class: "cultivos", role: "group", "aria-label": "Cultivo" });
   const titulo = h("h1");
 
+  /** En el balance, las filas del cultivo elegido arriba: se resaltan sin volver a consultar. */
+  function marcarCultivo() {
+    document.querySelectorAll<HTMLElement>("[data-cultivo]").forEach((el) => el.classList.toggle("elegido", el.dataset.cultivo === filtros.cultivo));
+  }
+
   function actualizarCabecera() {
-    titulo.textContent = `Coyuntura agrícola · campaña ${campaniaCorta(filtros.campania!)}`;
+    titulo.replaceChildren("Coyuntura agrícola ", h("span", { class: "titulo-campania" }, `· campaña ${campaniaCorta(filtros.campania!)}`));
     const opcionesCampania = campanias.map((c) => [c, campaniaCorta(c)] as const);
-    controles.replaceChildren(
-      h(
-        "div",
-        { class: "cultivos", role: "group", "aria-label": "Cultivo" },
-        CULTIVOS.map((c) =>
+    // Los botones se arman una vez y se actualizan: reemplazarlos le sacaría el foco a quien usa teclado.
+    if (!cultivos.childElementCount) {
+      cultivos.append(
+        ...CULTIVOS.map((c) =>
           h(
             "button",
             {
               type: "button",
-              "aria-pressed": c.id === filtros.cultivo ? "true" : "false",
+              "data-id": c.id,
               onclick: () => {
                 if (c.id === filtros.cultivo) return;
                 analytics.cultivoElegido(c.id);
@@ -103,7 +108,11 @@ async function informe(q: Consultas) {
             c.nombre,
           ),
         ),
-      ),
+      );
+    }
+    cultivos.querySelectorAll<HTMLButtonElement>("button").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.id === filtros.cultivo)));
+    marcarCultivo();
+    controles.replaceChildren(
       selector("Campaña", opcionesCampania, filtros.campania!, (c) => {
         const vs = c === filtros.vs ? null : filtros.vs;
         const nuevo = leerFiltros(`?campania=${encodeURIComponent(c)}${vs ? `&vs=${encodeURIComponent(vs)}` : ""}`, campanias);
@@ -122,17 +131,15 @@ async function informe(q: Consultas) {
     );
   }
 
-  const refrescarCuota = () => void actualizarCuota(cuota, q);
+  const refrescarCuota = () => {
+    marcarCultivo();
+    void actualizarCuota(cuota, q);
+  };
   const cabecera = h(
     "header",
     { class: "cabecera" },
-    h(
-      "div",
-      { class: "barra-superior" },
-      titulo,
-      h("div", { class: "sesion" }, cuota, h("button", { type: "button", class: "secundario", onclick: salir }, "Cerrar sesión")),
-    ),
-    controles,
+    h("div", { class: "barra-superior" }, titulo, h("button", { type: "button", class: "secundario", onclick: salir }, "Cerrar sesión")),
+    h("div", { class: "fila-controles" }, controles, cuota),
     h(
       "p",
       { class: "nota" },
@@ -140,33 +147,99 @@ async function informe(q: Consultas) {
     ),
   );
 
-  const definiciones = [
-    { id: "balance", titulo: "Balance de la campaña", abierta: true, crear: () => seccionBalance(q, () => filtros) },
-    { id: "ranking", titulo: "Provincias líderes", abierta: false, crear: () => seccionRanking(q, () => filtros, cambiar) },
-    { id: "evolucion", titulo: "Evolución del rendimiento", abierta: false, crear: () => seccionEvolucion(q, () => filtros, cambiar) },
-    { id: "mapa", titulo: "Mapa por departamento", abierta: false, crear: () => seccionMapa(q, () => filtros, cambiar, analizarDepartamento) },
-    { id: "departamento", titulo: "Tu departamento", abierta: false, crear: () => seccionDepartamento(q, () => filtros, cambiar) },
+  const definiciones: { id: SeccionId; pestania: string; titulo: string; crear: () => { clave: () => string; cargar: (c: HTMLElement, v: () => boolean) => Promise<void>; controles?: () => HTMLElement } }[] = [
+    { id: "balance", pestania: "Balance", titulo: "Balance de la campaña", crear: () => seccionBalance(q, () => filtros) },
+    { id: "ranking", pestania: "Provincias", titulo: "Provincias líderes", crear: () => seccionRanking(q, () => filtros, cambiar) },
+    { id: "evolucion", pestania: "Evolución", titulo: "Evolución del rendimiento", crear: () => seccionEvolucion(q, () => filtros, cambiar) },
+    { id: "mapa", pestania: "Mapa", titulo: "Mapa por departamento", crear: () => seccionMapa(q, () => filtros, cambiar, analizarDepartamento) },
+    { id: "departamento", pestania: "Tu departamento", titulo: "Tu departamento", crear: () => seccionDepartamento(q, () => filtros, cambiar) },
   ];
 
-  /** Desde el mapa: abre "Tu departamento" con ese departamento cargado. */
+  /** Desde el mapa: muestra "Tu departamento" con ese departamento cargado. */
   function analizarDepartamento(codigo: string) {
     analytics.departamentoElegido("mapa", codigo);
     cambiar({ depto: codigo, vsDepto: filtros.vsDepto === codigo ? null : filtros.vsDepto });
-    const seccion = document.getElementById("departamento") as HTMLDetailsElement | null;
-    if (seccion) {
-      seccion.open = true;
-      seccion.scrollIntoView({ behavior: "smooth", block: "start" });
-    }
+    analytics.seccionAbierta("departamento");
+    mostrarSeccion("departamento");
   }
 
-  const elementos = definiciones.map((d) =>
-    h("details", { class: "seccion", id: d.id, open: d.abierta }, h("summary", {}, h("h2", {}, d.titulo)), h("div", { class: "cuerpo" })),
+  const pestanias = definiciones.map((d) =>
+    h(
+      "button",
+      {
+        type: "button",
+        role: "tab",
+        id: `pestania-${d.id}`,
+        "aria-controls": d.id,
+        onclick: () => {
+          if (d.id === filtros.seccion) return;
+          analytics.seccionAbierta(d.id);
+          mostrarSeccion(d.id);
+        },
+      },
+      d.pestania,
+    ),
   );
+  // Flechas para moverse entre pestañas; Enter o espacio la abre. La activación es manual a
+  // propósito: abrir una pestaña cuesta una consulta, recorrerlas con el teclado no tiene que costar.
+  const listaPestanias = h(
+    "div",
+    {
+      class: "pestanias",
+      role: "tablist",
+      "aria-label": "Secciones del informe",
+      onkeydown: (e: Event) => {
+        const tecla = (e as KeyboardEvent).key;
+        const i = pestanias.indexOf(document.activeElement as HTMLButtonElement);
+        if (i < 0) return;
+        const destino = { ArrowRight: i + 1, ArrowLeft: i - 1, Home: 0, End: pestanias.length - 1 }[tecla];
+        if (destino == null) return;
+        e.preventDefault();
+        pestanias[(destino + pestanias.length) % pestanias.length]!.focus();
+      },
+    },
+    pestanias,
+  );
+  const barraFija = h("div", { class: "barra-fija" }, cultivos, listaPestanias);
+
+  // En el celular no entran todas las pestañas: un degradé avisa que hay más hacia la derecha.
+  const marcarDesborde = () =>
+    listaPestanias.classList.toggle("hay-mas", listaPestanias.scrollLeft + listaPestanias.clientWidth < listaPestanias.scrollWidth - 2);
+  listaPestanias.addEventListener("scroll", marcarDesborde, { passive: true });
+  window.addEventListener("resize", marcarDesborde);
+
+  const paneles = definiciones.map((d) =>
+    h("section", { class: "seccion", id: d.id, role: "tabpanel", "aria-labelledby": `pestania-${d.id}`, tabindex: "-1" }, h("h2", {}, d.titulo), h("div", { class: "cuerpo" })),
+  );
+  const contenido = h("div", { class: "paneles" }, paneles);
+
+  function mostrarSeccion(id: SeccionId) {
+    const antes = filtros.seccion;
+    filtros = { ...filtros, seccion: id };
+    history.replaceState(null, "", `${location.pathname}${escribirFiltros(filtros, campanias)}`);
+    definiciones.forEach((d, i) => {
+      const activa = d.id === id;
+      pestanias[i]!.setAttribute("aria-selected", String(activa));
+      pestanias[i]!.tabIndex = activa ? 0 : -1;
+      paneles[i]!.hidden = !activa;
+    });
+    secciones[definiciones.findIndex((d) => d.id === id)]?.mostrada();
+    pestanias[definiciones.findIndex((d) => d.id === id)]!.scrollIntoView({ inline: "nearest", block: "nearest" });
+    marcarDesborde();
+    if (antes === id) return;
+    // Leaflet mide su contenedor sólo al dibujar y en los resize de la ventana: si el mapa ya estaba
+    // dibujado y la ventana cambió mientras su pestaña no se veía, así se reacomoda.
+    window.dispatchEvent(new Event("resize"));
+    // Si la barra quedó pegada arriba, la sección nueva empieza debajo de ella y no a mitad de camino.
+    const tope = contenido.getBoundingClientRect().top + window.scrollY - barraFija.offsetHeight;
+    if (window.scrollY > tope) window.scrollTo({ top: tope });
+  }
 
   actualizarCabecera();
   app.replaceChildren(
     cabecera,
-    ...elementos,
+    barraFija,
+    contenido,
     h(
       "footer",
       { class: "pie" },
@@ -183,16 +256,17 @@ async function informe(q: Consultas) {
   definiciones.forEach((d, i) => {
     const s = d.crear();
     secciones.push(
-      montarSeccion(elementos[i]!, {
+      montarSeccion(paneles[i]!, {
         id: d.id,
         clave: s.clave,
         cargar: s.cargar,
-        controles: "controles" in s ? s.controles : undefined,
+        controles: s.controles,
         sesionVencida: salir,
         despuesDeCargar: refrescarCuota,
       }),
     );
   });
+  mostrarSeccion(filtros.seccion);
 }
 
 async function arrancar() {

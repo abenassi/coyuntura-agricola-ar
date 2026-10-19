@@ -1,7 +1,7 @@
 /** Cuentas que el informe hace sobre las respuestas del MCP. Funciones puras, sin red. */
 
 import { normalizar } from "../geo/cruce";
-import { CULTIVOS, type Balance, type CultivoId, type CultivosDisponibles, type FilaBalance, type FilaEstimacion } from "./tipos";
+import { CULTIVOS, type Balance, type CultivoId, type CultivosDisponibles, type FilaBalance, type FilaEstimacion, type Ranking } from "./tipos";
 
 /** Primera campaña del selector: desde ahí el SIIA separa soja de 1ra y de 2da. */
 export const PRIMERA_CAMPANIA = "2000/2001";
@@ -77,6 +77,35 @@ export function quantiles(valores: number[], clases: number): number[] {
   const orden = [...valores].sort((a, b) => a - b);
   if (!orden.length) return [];
   return Array.from({ length: clases - 1 }, (_, i) => orden[Math.floor(((i + 1) * orden.length) / clases)]!);
+}
+
+/**
+ * Cortes de leyenda que se puedan leer: el rinde a la centena (3.062 → 3.100 kg/ha) y el resto a
+ * dos cifras significativas (412.345 t → 410.000 t). Si dos cortes quedan iguales, sobra uno: el
+ * mapa usa una clase menos.
+ */
+export function redondearCortes(cortes: number[], metrica: "rendimiento" | "produccion"): number[] {
+  const redondear = (v: number) => {
+    if (metrica === "rendimiento") return Math.round(v / 100) * 100;
+    if (v <= 0) return 0;
+    const paso = Math.max(10 ** (Math.floor(Math.log10(v)) - 1), 1);
+    return Math.round(v / paso) * paso;
+  };
+  const salida: number[] = [];
+  for (const c of cortes.map(redondear)) if (c > (salida.at(-1) ?? -Infinity)) salida.push(c);
+  return salida;
+}
+
+/** Las `n` provincias de arriba del ranking y cuánto suman de participación. null si no alcanza. */
+export function concentracion(ranking: Ranking["ranking"], n = 3): { provincias: string[]; share: number } | null {
+  const primeras = ranking.slice(0, n);
+  if (primeras.length < n || primeras.some((p) => p.share_pct == null)) return null;
+  return { provincias: primeras.map((p) => p.provincia), share: primeras.reduce((s, p) => s + p.share_pct!, 0) };
+}
+
+/** Los `n` departamentos con el valor más alto de `campo`, de mayor a menor. */
+export function mejoresDepartamentos(filas: FilaEstimacion[], campo: "rendimiento_kg_ha" | "produccion_tn", n = 5): FilaEstimacion[] {
+  return [...filas].filter((f) => f[campo] != null).sort((x, y) => y[campo] - x[campo]).slice(0, n);
 }
 
 export type VariableDepto = "rendimiento" | "produccion" | "sup_sembrada" | "sup_cosechada";

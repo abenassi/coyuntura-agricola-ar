@@ -23,7 +23,7 @@ test("sin sesión muestra la pantalla de ingreso y no consulta el MCP", async ({
   expect(errores).toEqual([]);
 });
 
-test("con sesión: balance al abrir, el resto recién cuando se abre cada sección", async ({ page }) => {
+test("con sesión: balance al abrir, el resto recién cuando se abre cada pestaña", async ({ page }) => {
   const sim: Simulacion = { llamadas: [] };
   await simularMcp(page, sim);
   await conSesion(page);
@@ -36,15 +36,15 @@ test("con sesión: balance al abrir, el resto recién cuando se abre cada secci�
   const siia = () => sim.llamadas.filter((t) => t.startsWith("siia_"));
   expect(siia().sort()).toEqual(["siia_balance_campania", "siia_balance_campania", "siia_cultivos_disponibles"]);
 
-  await page.getByText("Provincias líderes").click();
+  await page.getByRole("tab", { name: "Provincias" }).click();
   await expect(page.locator(".barras li").first()).toContainText("Buenos Aires");
   await expect(page.locator(".barras li").first()).toContainText("30,4 %");
 
-  await page.getByText("Evolución del rendimiento").click();
+  await page.getByRole("tab", { name: "Evolución" }).click();
   await expect(page.getByText(/sobre el promedio de las últimas 10 campañas/)).toBeVisible();
   await expect(page.locator(".grafico canvas")).toBeVisible();
 
-  await page.getByText("Mapa por departamento").click();
+  await page.getByRole("tab", { name: "Mapa" }).click();
   await expect.poll(() => page.locator(".mapa path.leaflet-interactive").count()).toBeGreaterThan(500);
   expect(await page.locator(".mapa path.leaflet-interactive").count()).toBeGreaterThan(500);
   await expect(page.locator("#mapa .aviso")).toHaveCount(0); // todos los departamentos cruzaron
@@ -60,7 +60,7 @@ test("cambiar de métrica en el ranking pide una sola consulta y actualiza la UR
   await simularMcp(page, sim);
   await conSesion(page);
   await page.goto("./?cultivo=maiz");
-  await page.getByText("Provincias líderes").click();
+  await page.getByRole("tab", { name: "Provincias" }).click();
   await expect(page.locator(".barras li").first()).toBeVisible();
   const antes = sim.llamadas.filter((t) => t === "siia_ranking_provincias").length;
   await page.getByLabel("Ordenar por").selectOption("rendimiento");
@@ -75,10 +75,14 @@ test("cuota agotada: la sección lo dice, con link a los planes, y el resto sigu
   await conSesion(page);
   await page.goto("./");
   await expect(page.locator("table.balance")).toBeVisible();
-  await page.getByText("Provincias líderes").click();
+  await page.getByRole("tab", { name: "Provincias" }).click();
   await expect(page.locator("#ranking")).toContainText("Llegaste al límite de consultas de tu plan");
   await expect(page.locator("#ranking a", { hasText: "Ver planes" })).toHaveAttribute("href", /\/upgrade\?source=coyuntura-agricola/);
+  // Lo ya cargado sigue ahí: volver al balance no consulta nada.
+  const antes = sim.llamadas.length;
+  await page.getByRole("tab", { name: "Balance" }).click();
   await expect(page.locator("table.balance")).toBeVisible();
+  expect(sim.llamadas.slice(antes).filter((t) => t.startsWith("siia_"))).toEqual([]);
 });
 
 test("parámetros inválidos en la URL caen a los defaults", async ({ page }) => {
@@ -98,14 +102,22 @@ test("en el celular el informe entra en el ancho de la pantalla", async ({ page 
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto("./");
   await expect(page.locator("table.balance")).toBeVisible();
-  await page.getByText("Provincias líderes").click();
-  await page.getByText("Mapa por departamento").click();
-  await expect.poll(() => page.locator(".mapa path.leaflet-interactive").count()).toBeGreaterThan(500);
-  const desborde = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
-  expect(desborde).toBeLessThanOrEqual(0);
   // La tabla del balance tampoco puede necesitar scroll: la columna de variación es la que importa.
   const desbordeTabla = await page.locator(".tabla-scroll").evaluate((el) => el.scrollWidth - el.clientWidth);
   expect(desbordeTabla).toBeLessThanOrEqual(0);
+  const desborde = () => page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
+  expect(await desborde()).toBeLessThanOrEqual(0);
+  for (const pestania of ["Provincias", "Evolución", "Mapa", "Tu departamento"]) {
+    await page.getByRole("tab", { name: pestania }).click();
+    await page.waitForTimeout(300);
+    expect(await desborde(), pestania).toBeLessThanOrEqual(0);
+  }
+  await page.getByRole("tab", { name: "Mapa" }).click();
+  await expect.poll(() => page.locator(".mapa path.leaflet-interactive").count()).toBeGreaterThan(500);
+  // Los controles se tocan con el dedo: 44 px de alto como mínimo.
+  for (const control of await page.locator(".barra-fija button, .cabecera select").all()) {
+    expect((await control.boundingBox())!.height).toBeGreaterThanOrEqual(44);
+  }
   await page.screenshot({ path: "test-results/informe-celular.png", fullPage: true });
 });
 
@@ -116,7 +128,7 @@ test("una respuesta vieja no borra el mapa que ya está a la vista", async ({ pa
   await simularMcp(page, sim);
   await conSesion(page);
   await page.goto("./");
-  await page.getByText("Mapa por departamento").click();
+  await page.getByRole("tab", { name: "Mapa" }).click();
   await expect.poll(() => page.locator(".mapa path.leaflet-interactive").count()).toBeGreaterThan(500);
   await page.getByRole("button", { name: "Maíz" }).click();
   await page.getByRole("button", { name: "Trigo" }).click();
@@ -129,7 +141,7 @@ test("una respuesta vieja no borra el gráfico de evolución", async ({ page }) 
   await simularMcp(page, sim);
   await conSesion(page);
   await page.goto("./");
-  await page.getByText("Evolución del rendimiento").click();
+  await page.getByRole("tab", { name: "Evolución" }).click();
   await expect(page.locator(".grafico canvas")).toBeVisible();
   await page.getByLabel("Zona").selectOption("Buenos Aires");
   await page.getByRole("button", { name: "Maíz" }).click();
@@ -166,7 +178,7 @@ test("los nombres que vienen del MCP se muestran como texto, nunca como HTML", a
   await simularMcp(page, sim);
   await conSesion(page);
   await page.goto("./");
-  await page.getByText("Mapa por departamento").click();
+  await page.getByRole("tab", { name: "Mapa" }).click();
   await expect.poll(() => page.locator(".mapa path.leaflet-interactive").count()).toBeGreaterThan(500);
   const visto = await page.evaluate(() => {
     // Leaflet guarda la capa en cada path; buscamos la de Unión y le abrimos el tooltip.
@@ -200,7 +212,7 @@ test("una provincia sin datos avisa, y después se puede elegir otra", async ({ 
   });
   await conSesion(page);
   await page.goto("./");
-  await page.getByText("Evolución del rendimiento").click();
+  await page.getByRole("tab", { name: "Evolución" }).click();
   await expect(page.locator("#evolucion .grafico canvas")).toBeVisible();
 
   await page.getByLabel("Zona").selectOption("Tierra del Fuego");
@@ -211,4 +223,145 @@ test("una provincia sin datos avisa, y después se puede elegir otra", async ({ 
   await page.getByLabel("Zona").selectOption("Córdoba");
   await expect(page.locator("#evolucion .grafico canvas")).toBeVisible();
   await expect(page).toHaveURL(/provincia=C%C3%B3rdoba/);
+});
+
+test("un link a una pestaña la abre directo y consulta sólo lo de esa pestaña", async ({ page }) => {
+  const sim: Simulacion = { llamadas: [] };
+  await simularMcp(page, sim);
+  await conSesion(page);
+  await page.goto("./?seccion=mapa");
+  await expect(page.getByRole("tab", { name: "Mapa" })).toHaveAttribute("aria-selected", "true");
+  await expect.poll(() => page.locator(".mapa path.leaflet-interactive").count()).toBeGreaterThan(500);
+  expect(sim.llamadas.filter((t) => t.startsWith("siia_")).sort()).toEqual(["siia_cultivos_disponibles", "siia_estimaciones_cultivo"]);
+  await expect(page.locator("#balance")).toBeHidden();
+
+  // Volver al balance carga el balance; volver al mapa ya no consulta nada.
+  await page.getByRole("tab", { name: "Balance" }).click();
+  await expect(page.locator("table.balance")).toBeVisible();
+  await expect(page).not.toHaveURL(/seccion=/);
+  const antes = sim.llamadas.length;
+  await page.getByRole("tab", { name: "Mapa" }).click();
+  await expect(page.locator("#mapa .mapa")).toBeVisible();
+  expect(sim.llamadas.slice(antes).filter((t) => t.startsWith("siia_"))).toEqual([]);
+});
+
+test("las pestañas se recorren con las flechas sin abrir nada, y Enter abre", async ({ page }) => {
+  const sim: Simulacion = { llamadas: [] };
+  await simularMcp(page, sim);
+  await conSesion(page);
+  await page.goto("./");
+  await expect(page.locator("table.balance")).toBeVisible();
+  const antes = sim.llamadas.filter((t) => t.startsWith("siia_")).length;
+  await page.getByRole("tab", { name: "Balance" }).focus();
+  await page.keyboard.press("ArrowRight");
+  await page.keyboard.press("ArrowRight");
+  await expect(page.getByRole("tab", { name: "Evolución" })).toBeFocused();
+  expect(sim.llamadas.filter((t) => t.startsWith("siia_")).length).toBe(antes);
+  await page.keyboard.press("Enter");
+  await expect(page.locator("#evolucion .grafico canvas")).toBeVisible();
+});
+
+test("balance: variaciones con flecha y color, y el cultivo elegido resaltado sin consultar", async ({ page }) => {
+  const sim: Simulacion = { llamadas: [] };
+  await simularMcp(page, sim);
+  await conSesion(page);
+  await page.goto("./");
+  await expect(page.locator(".titular-cifra").first()).toHaveText("126,9 M t");
+  const maiz = page.locator("table.balance tr[data-cultivo=maiz]").nth(1);
+  await expect(maiz.locator(".delta")).toHaveClass(/baja/);
+  await expect(maiz.locator(".delta")).toHaveText("▼ −10,1 %");
+  await expect(page.locator("table.balance tr.grupo.elegido")).toHaveText(/Soja/);
+  const antes = sim.llamadas.length;
+  await page.getByRole("button", { name: "Maíz" }).click();
+  await expect(page.locator("table.balance tr.grupo.elegido")).toHaveText(/Maíz/);
+  expect(sim.llamadas.slice(antes).filter((t) => t.startsWith("siia_"))).toEqual([]);
+});
+
+test("ranking: concentración, las 5 primeras y el resto al desplegar", async ({ page }) => {
+  const sim: Simulacion = { llamadas: [] };
+  await simularMcp(page, sim);
+  await conSesion(page);
+  await page.goto("./?seccion=ranking");
+  await expect(page.locator("#ranking")).toContainText("Buenos Aires, Córdoba y Santa Fe produjeron el 81,4 % de la soja 2024/25.");
+  await expect(page.locator(".barras li:visible")).toHaveCount(5);
+  await page.getByRole("button", { name: "Ver las 15 provincias" }).click();
+  await expect(page.locator(".barras li:visible")).toHaveCount(15);
+  await page.getByRole("button", { name: "Ver sólo las 5 primeras" }).click();
+  await expect(page.locator(".barras li:visible")).toHaveCount(5);
+});
+
+test("mapa: el panel muestra los primeros y el departamento que se elige, con cortes redondos", async ({ page }) => {
+  const sim: Simulacion = { llamadas: [] };
+  await simularMcp(page, sim);
+  await conSesion(page);
+  await page.goto("./?seccion=mapa");
+  await expect.poll(() => page.locator(".mapa path.leaflet-interactive").count()).toBeGreaterThan(500);
+  await expect(page.locator(".mejores li").first()).toContainText("Belgrano, Santa Fe");
+  for (const corte of await page.locator(".rampa-cortes span:not(.rampa-unidad)").allTextContents()) {
+    expect(Number(corte.replace(/\./g, "")) % 100, corte).toBe(0);
+  }
+  await page.locator(".mejores button").first().click();
+  await expect(page.locator(".panel-detalle")).toContainText("Belgrano, Santa Fe");
+  await expect(page.locator(".panel-detalle")).toContainText("4.008 kg/ha");
+  await page.getByRole("button", { name: "Ver su evolución →" }).click();
+  await expect(page.getByRole("tab", { name: "Tu departamento" })).toHaveAttribute("aria-selected", "true");
+  await expect(page).toHaveURL(/seccion=departamento/);
+});
+
+test("dejar el mapa mientras carga y volver: se dibuja bien, sin consultar de nuevo", async ({ page }) => {
+  const sim: Simulacion = { llamadas: [], demora: (tool) => (tool === "siia_estimaciones_cultivo" ? 1200 : 0) };
+  await simularMcp(page, sim);
+  await conSesion(page);
+  await page.goto("./");
+  await expect(page.locator("table.balance")).toBeVisible();
+  await page.getByRole("tab", { name: "Mapa" }).click();
+  await page.getByRole("tab", { name: "Provincias" }).click();
+  await page.waitForTimeout(2000);
+  await page.getByRole("tab", { name: "Mapa" }).click();
+  await expect.poll(() => page.locator(".mapa path.leaflet-interactive").count()).toBeGreaterThan(500);
+  const conNaN = await page.locator(".mapa path.leaflet-interactive").evaluateAll((ps) => ps.filter((p) => (p.getAttribute("d") ?? "").includes("NaN")).length);
+  expect(conNaN).toBe(0);
+  // Encuadrado en la zona agrícola: los polígonos llenan buena parte del contenedor (con el
+  // contenedor oculto al dibujar, Leaflet encuadraba con tamaño 0 y el mapa quedaba diminuto o corrido).
+  const ocupacion = await page.locator("#mapa .mapa").evaluate((m) => {
+    const c = m.getBoundingClientRect();
+    let izq = Infinity, der = -Infinity, arr = Infinity, aba = -Infinity;
+    for (const p of m.querySelectorAll("path.leaflet-interactive")) {
+      const r = p.getBoundingClientRect();
+      izq = Math.min(izq, r.left); der = Math.max(der, r.right); arr = Math.min(arr, r.top); aba = Math.max(aba, r.bottom);
+    }
+    const visible = (Math.min(der, c.right) - Math.max(izq, c.left)) * (Math.min(aba, c.bottom) - Math.max(arr, c.top));
+    return visible / (c.width * c.height);
+  });
+  expect(ocupacion).toBeGreaterThan(0.4);
+  expect(sim.llamadas.filter((t) => t === "siia_estimaciones_cultivo")).toHaveLength(1);
+});
+
+test("cuota agotada en una pestaña: volver a ella no la consulta de nuevo", async ({ page }) => {
+  const sim: Simulacion = { llamadas: [], agotarEn: "siia_ranking_provincias" };
+  await simularMcp(page, sim);
+  await conSesion(page);
+  await page.goto("./?seccion=ranking");
+  await expect(page.locator("#ranking")).toContainText("Llegaste al límite de consultas de tu plan");
+  await page.getByRole("tab", { name: "Balance" }).click();
+  await page.getByRole("tab", { name: "Provincias" }).click();
+  await expect(page.locator("#ranking")).toContainText("Llegaste al límite de consultas de tu plan");
+  expect(sim.llamadas.filter((t) => t === "siia_ranking_provincias")).toHaveLength(1);
+});
+
+test("el número de la barra más larga del ranking entra en anchos intermedios", async ({ page }) => {
+  const sim: Simulacion = { llamadas: [] };
+  await simularMcp(page, sim);
+  await conSesion(page);
+  await page.goto("./?seccion=ranking");
+  await expect(page.locator(".barras li").first()).toBeVisible();
+  for (const ancho of [390, 561, 640, 720, 900, 1280]) {
+    await page.setViewportSize({ width: ancho, height: 900 });
+    await page.waitForTimeout(150);
+    const sobra = await page.locator(".barras li").first().evaluate((li) => {
+      const seccion = li.closest(".seccion")!.getBoundingClientRect();
+      return seccion.right - li.querySelector(".barra-valor")!.getBoundingClientRect().right;
+    });
+    expect(sobra, `ancho ${ancho}`).toBeGreaterThan(0);
+  }
 });

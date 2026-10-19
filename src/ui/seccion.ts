@@ -1,7 +1,7 @@
 /**
- * Una sección del informe es un `<details>`: se carga recién cuando el visitante la abre, porque
- * cada consulta sale de su cuota diaria. Si cambian los filtros, se recarga sólo si está abierta
- * y sólo si cambió algo que la afecta; si está cerrada, se recarga la próxima vez que se abra.
+ * Una sección del informe es una pestaña: se carga recién cuando el visitante la mira, porque
+ * cada consulta sale de su cuota diaria. Si cambian los filtros, se recarga sólo si está a la vista
+ * y sólo si cambió algo que la afecta; si no, se recarga la próxima vez que se muestre.
  */
 
 import * as analytics from "../analytics";
@@ -10,6 +10,8 @@ import { McpAuthError, McpCuotaError, McpError, McpToolError } from "../mcp/clie
 import { h } from "./dom";
 
 export interface Seccion {
+  /** Avisar que la pestaña pasó a estar a la vista. */
+  mostrada(): void;
   /** Avisar que cambiaron los filtros. */
   filtrosCambiaron(): void;
 }
@@ -34,8 +36,9 @@ export interface OpcionesSeccion {
   despuesDeCargar?: () => void;
 }
 
-export function montarSeccion(details: HTMLDetailsElement, opciones: OpcionesSeccion): Seccion {
-  const cuerpo = details.querySelector<HTMLElement>(".cuerpo")!;
+/** `panel` es el `role="tabpanel"` de la sección: está a la vista si no tiene `hidden`. */
+export function montarSeccion(panel: HTMLElement, opciones: OpcionesSeccion): Seccion {
+  const cuerpo = panel.querySelector<HTMLElement>(".cuerpo")!;
   let cargada: string | null = null;
   let enCurso = 0;
 
@@ -54,8 +57,9 @@ export function montarSeccion(details: HTMLDetailsElement, opciones: OpcionesSec
       if (turno === enCurso) mostrar(destino);
     } catch (e: unknown) {
       if (turno !== enCurso) return;
-      // Una explicación de la tool no cambia reintentando; una falla, sí.
-      if (!(e instanceof McpToolError)) cargada = null;
+      // Una explicación de la tool o la cuota agotada no cambian reintentando (volver a la pestaña
+      // no vuelve a consultar); una falla, sí.
+      if (!(e instanceof McpToolError) && !(e instanceof McpCuotaError)) cargada = null;
       mostrar(mensajeDeError(e, opciones.id, cargar));
       if (e instanceof McpAuthError) opciones.sesionVencida();
     } finally {
@@ -63,16 +67,12 @@ export function montarSeccion(details: HTMLDetailsElement, opciones: OpcionesSec
     }
   }
 
-  details.addEventListener("toggle", () => {
-    if (!details.open) return;
-    analytics.seccionAbierta(opciones.id);
-    void cargar();
-  });
-  if (details.open) void cargar();
-
   return {
+    mostrada() {
+      void cargar();
+    },
     filtrosCambiaron() {
-      if (details.open) void cargar();
+      if (!panel.hidden) void cargar();
     },
   };
 }

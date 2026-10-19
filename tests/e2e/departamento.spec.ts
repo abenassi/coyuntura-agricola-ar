@@ -9,7 +9,7 @@ const historias = (sim: Simulacion) =>
 
 async function abrir(page: Page, url = "./") {
   await page.goto(url);
-  await page.getByText("Tu departamento").click();
+  await page.getByRole("tab", { name: "Tu departamento" }).click();
 }
 
 test("se elige con el buscador predictivo y muestra la historia contra la provincia", async ({ page }) => {
@@ -63,12 +63,12 @@ test("comparar suma una consulta; cambiar variable o período no consulta nada",
   expect(sim.detalle!.slice(antes).filter((d) => d.tool.startsWith("siia_"))).toEqual([]);
 });
 
-test("desde el mapa: 'Ver su evolución' abre la sección con ese departamento", async ({ page }) => {
+test("desde el mapa: 'Ver su evolución' abre la pestaña con ese departamento", async ({ page }) => {
   const sim: Simulacion = { llamadas: [], detalle: [] };
   await simularMcp(page, sim);
   await conSesion(page);
   await page.goto("./");
-  await page.getByText("Mapa por departamento").click();
+  await page.getByRole("tab", { name: "Mapa" }).click();
   await expect.poll(() => page.locator(".mapa path.leaflet-interactive").count()).toBeGreaterThan(500);
   // Abrir el detalle de General López (Santa Fe) con un clic sobre su polígono.
   const ok = await page.evaluate(() => {
@@ -88,7 +88,8 @@ test("desde el mapa: 'Ver su evolución' abre la sección con ese departamento",
   });
   expect(ok).toBe(true);
   await page.getByRole("button", { name: "Ver su evolución →" }).click();
-  await expect(page.locator("#departamento")).toHaveAttribute("open", "");
+  await expect(page.getByRole("tab", { name: "Tu departamento" })).toHaveAttribute("aria-selected", "true");
+  await expect(page.locator("#departamento")).toBeVisible();
   await expect(page.locator("#departamento .resumen")).toContainText("General López, Santa Fe");
   await expect(page).toHaveURL(/depto=82042/);
 });

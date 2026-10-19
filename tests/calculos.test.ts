@@ -3,11 +3,14 @@ import {
   campaniaAnterior,
   campaniasDisponibles,
   quantiles,
+  redondearCortes,
+  concentracion,
+  mejoresDepartamentos,
   compararBalances,
   variacionPct,
 } from "../src/datos/calculos";
 import { consultas } from "../src/datos/consultas";
-import type { Balance, CultivosDisponibles, Estimaciones } from "../src/datos/tipos";
+import type { Balance, CultivosDisponibles, Estimaciones, FilaEstimacion } from "../src/datos/tipos";
 import b2025 from "./fixtures/balance-2024-2025.json";
 import b2024 from "./fixtures/balance-2023-2024.json";
 
@@ -107,6 +110,43 @@ describe("quantiles", () => {
   });
   test("sin valores no hay cortes", () => {
     expect(quantiles([], 5)).toEqual([]);
+  });
+});
+
+describe("redondearCortes", () => {
+  test("el rinde va a la centena", () => {
+    expect(redondearCortes([1888, 2512, 2700, 3062], "rendimiento")).toEqual([1900, 2500, 2700, 3100]);
+  });
+  test("la producción va a dos cifras significativas", () => {
+    expect(redondearCortes([8_431, 45_123, 312_456, 1_234_567], "produccion")).toEqual([8_400, 45_000, 310_000, 1_200_000]);
+  });
+  test("si dos cortes quedan iguales, sobra uno", () => {
+    expect(redondearCortes([2_510, 2_540, 2_900], "rendimiento")).toEqual([2_500, 2_900]);
+  });
+});
+
+describe("concentracion", () => {
+  const fila = (provincia: string, share_pct?: number) => ({ posicion: 1, provincia, valor: 1, share_pct });
+  test("suma la participación de las tres primeras", () => {
+    const c = concentracion([fila("Buenos Aires", 30.39), fila("Córdoba", 28.62), fila("Santa Fe", 22.43), fila("Entre Ríos", 6.6)]);
+    expect(c!.provincias).toEqual(["Buenos Aires", "Córdoba", "Santa Fe"]);
+    expect(c!.share).toBeCloseTo(81.44);
+  });
+  test("sin participación (ranking por rinde) o con menos de tres, no hay", () => {
+    expect(concentracion([fila("A"), fila("B"), fila("C")])).toBeNull();
+    expect(concentracion([fila("A", 60), fila("B", 40)])).toBeNull();
+  });
+});
+
+describe("mejoresDepartamentos", () => {
+  test("ordena de mayor a menor por el campo pedido", () => {
+    const filas = [
+      { departamento: "A", rendimiento_kg_ha: 3000, produccion_tn: 10 },
+      { departamento: "B", rendimiento_kg_ha: 4000, produccion_tn: 5 },
+      { departamento: "C", rendimiento_kg_ha: 2000, produccion_tn: 20 },
+    ] as FilaEstimacion[];
+    expect(mejoresDepartamentos(filas, "rendimiento_kg_ha", 2).map((f) => f.departamento)).toEqual(["B", "A"]);
+    expect(mejoresDepartamentos(filas, "produccion_tn", 1).map((f) => f.departamento)).toEqual(["C"]);
   });
 });
 
